@@ -1,0 +1,69 @@
+:root {
+  --accent: #ff8c00; /* laranja */
+}
+
+/* Base */
+body {
+  background: #f5f6fa;
+}
+
+/* Acentos e botões */
+.text-accent { color: var(--accent) !important; }
+.btn-accent {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: #ff9f2b;
+  --bs-btn-hover-border-color: #ff9f2b;
+}
+
+/* Cards */
+.card { border-radius: .75rem; }
+
+/* Perfil */
+.profile-card .profile-avatar { width: 64px; height: 64px; }
+.profile-sections { margin-top: .25rem; }
+
+/* ===== Menu global (direita) ===== */
+.side-menu-card .list-group-item { border-left: 0; border-right: 0; }
+.side-tabs .side-tab { padding: 0.9rem 1rem; }
+.side-tabs .side-icon { font-size: 1.25rem; color: #3b3b3b; }
+.side-tabs .side-tab:hover { background: #f8f9fb; }
+.side-tabs .side-tab.active {
+  color: var(--accent);
+  background: #fff7ee;
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+.side-tabs .side-tab.active .side-icon { color: var(--accent); }
+
+/* ===== Opções da conta ===== */
+.account-card .account-item { padding: 0.95rem 1rem; }
+.account-card .account-icon { font-size: 1.1rem; color: #3b3b3b; }
+.account-card .chevron { transition: transform .15s ease; }
+.account-card .account-item:hover .chevron { transform: translateX(2px); }
+.account-card .list-group-item { border-left: 0; border-right: 0; }
+.account-card .list-group-item:first-child {
+  border-top-left-radius: .5rem; border-top-right-radius: .5rem;
+}
+.account-card .list-group-item:last-child {
+  border-bottom-left-radius: .5rem; border-bottom-right-radius: .5rem;
+}
+
+/* Botão sair (mesmo estilo do Feed) */
+#btnSair, #btnSairMobile {
+  background: #f1f2f4;
+  border: 1px solid #e7e8ea;
+}
+#btnSair:hover, #btnSairMobile:hover { background: #ebecee; }
+
+/* Offcanvas arredondado */
+.offcanvas {
+  border-top-left-radius: .75rem;
+  border-bottom-left-radius: .75rem;
+}
+
+/* Espaço no mobile para o bottom nav não cobrir conteúdo */
+@media (max-width: 767.98px) {
+  main { padding-bottom: 72px; }
+}

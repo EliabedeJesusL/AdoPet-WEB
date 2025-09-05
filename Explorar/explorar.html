@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Explorar - Adopet</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="explorar.css" />
+  </head>
+  <body>
+    <!-- Header (padronizado como o Feed) -->
+    <header class="border-bottom bg-white">
+      <div class="container-xxl py-3 d-flex align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="/Dashboard/dashboard.html">
+            <i class="bi bi-heart-fill text-accent"></i>
+            <span class="fw-semibold">Adopet</span>
+          </a>
+
+          <form class="d-none d-md-block" role="search" style="min-width: 360px;">
+            <div class="input-group">
+              <span class="input-group-text bg-body"><i class="bi bi-search"></i></span>
+              <input id="exploreSearch" class="form-control" type="search" placeholder="Buscar pets, instituições, posts..." aria-label="Buscar" />
+            </div>
+          </form>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas" aria-label="Abrir menu">
+            <i class="bi bi-list"></i>
+          </button>
+          <button class="btn btn-outline-secondary" aria-label="Notificações"><i class="bi bi-bell"></i></button>
+          <a class="btn btn-outline-secondary" href="/Chat/chat.html" aria-label="Mensagens">
+            <i class="bi bi-chat-dots"></i>
+          </a>
+          <!-- Botão de filtro -->
+          <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtersOffcanvas" aria-controls="filtersOffcanvas" aria-label="Filtros" id="btnFilters">
+            <i class="bi bi-sliders"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="container-xxl my-4">
+      <div class="row g-4">
+        <!-- Coluna principal: grid de pets -->
+        <section class="col-12 col-lg-8 order-2 order-lg-1">
+          <div class="row row-cols-1 row-cols-sm-2 g-4" id="gridPets">
+            <!-- Card 1 -->
+            <div class="col">
+              <article class="card pet-card shadow-sm h-100"
+                data-species="cao" data-sex="macho" data-size="medio" data-distance="8">
+                <div class="ratio ratio-4x3">
+                  <img class="object-fit-cover" src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1600&auto=format&fit=crop" alt="Cachorro Orelha Marrom" loading="lazy" />
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title mb-2">Cachorro Orelha Marrom</h5>
+                  <a class="btn-cta" href="/Adocao/detalhe.html" rel="noopener">Adotar</a>
+                </div>
+              </article>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col">
+              <article class="card pet-card shadow-sm h-100"
+                data-species="cao" data-sex="macho" data-size="medio" data-distance="15">
+                <div class="ratio ratio-4x3">
+                  <img class="object-fit-cover" src="https://images.unsplash.com/photo-1596495578065-8aa5999bd1b1?q=80&w=1600&auto=format&fit=crop" alt="Cachorro Caramelo" loading="lazy" />
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title mb-2">Cachorro Caramelo</h5>
+                  <a class="btn-cta" href="/Adocao/detalhe.html" rel="noopener">Adotar</a>
+                </div>
+              </article>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col">
+              <article class="card pet-card shadow-sm h-100"
+                data-species="cao" data-sex="macho" data-size="grande" data-distance="27">
+                <div class="ratio ratio-4x3">
+                  <img class="object-fit-cover" src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1600&auto=format&fit=crop" alt="Cachorro Orelhudo" loading="lazy" />
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title mb-2">Cachorro Orelhudo</h5>
+                  <a class="btn-cta" href="/Adocao/detalhe.html" rel="noopener">Adotar</a>
+                </div>
+              </article>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="col">
+              <article class="card pet-card shadow-sm h-100"
+                data-species="cao" data-sex="femea" data-size="medio" data-distance="5">
+                <div class="ratio ratio-4x3">
+                  <img class="object-fit-cover" src="https://images.unsplash.com/photo-1558944351-c0d59d6428a8?q=80&w=1600&auto=format&fit=crop" alt="Cachorro Preto e Branco" loading="lazy" />
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title mb-2">Cachorro Preto e Branco</h5>
+                  <a class="btn-cta" href="/Adocao/detalhe.html" rel="noopener">Adotar</a>
+                </div>
+              </article>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="col">
+              <article class="card pet-card shadow-sm h-100"
+                data-species="cao" data-sex="macho" data-size="pequeno" data-distance="2">
+                <div class="ratio ratio-4x3">
+                  <img class="object-fit-cover" src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=1600&auto=format&fit=crop" alt="Pinscher" loading="lazy" />
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title mb-2">Pinscher</h5>
+                  <a class="btn-cta" href="/Adocao/detalhe.html" rel="noopener">Adotar</a>
+                </div>
+              </article>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="col">
+              <article class="card pet-card shadow-sm h-100"
+                data-species="cao" data-sex="femea" data-size="pequeno" data-distance="40">
+                <div class="ratio ratio-4x3">
+                  <img class="object-fit-cover" src="https://images.unsplash.com/photo-1525253013412-55c1a69a5738?q=80&w=1600&auto=format&fit=crop" alt="Jack Russell" loading="lazy" />
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title mb-2">Jack Russell</h5>
+                  <a class="btn-cta" href="/Adocao/detalhe.html" rel="noopener">Adotar</a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- MENU LATERAL DIREITO (padronizado) -->
+        <aside class="col-12 col-lg-4 order-1 order-lg-2">
+          <div class="sticky-lg-top" style="top: 1.25rem">
+            <div class="card shadow-sm d-none d-lg-block side-menu-card">
+              <nav class="list-group list-group-flush side-tabs">
+                <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <i class="bi bi-house side-icon"></i>
+                  <span>Início</span>
+                </a>
+                <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" aria-current="page">
+                  <i class="bi bi-compass side-icon"></i>
+                  <span>Explorar</span>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <i class="bi bi-plus-circle side-icon"></i>
+                  <span>Cadastrar</span>
+                </a>
+                <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <i class="bi bi-gift side-icon"></i>
+                  <span>Doe</span>
+                </a>
+                <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <i class="bi bi-person side-icon"></i>
+                  <span>Conta</span>
+                </a>
+              </nav>
+            </div>
+
+            <!-- Offcanvas (mobile) com os mesmos itens -->
+            <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="menuOffcanvas" aria-labelledby="menuOffcanvasLabel">
+              <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="menuOffcanvasLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+              </div>
+              <div class="offcanvas-body p-0">
+                <nav class="list-group list-group-flush side-tabs">
+                  <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                    <i class="bi bi-house side-icon"></i><span>Início</span>
+                  </a>
+                  <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" aria-current="page">
+                    <i class="bi bi-compass side-icon"></i><span>Explorar</span>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                    <i class="bi bi-plus-circle side-icon"></i><span>Cadastrar</span>
+                  </a>
+                  <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                    <i class="bi bi-gift side-icon"></i><span>Doe</span>
+                  </a>
+                  <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                    <i class="bi bi-person side-icon"></i><span>Conta</span>
+                  </a>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Bottom nav (mobile) -->
+    <nav class="navbar fixed-bottom bg-white border-top d-md-none">
+      <div class="container-fluid px-3">
+        <div class="d-flex justify-content-between w-100 text-center small">
+          <a href="/Dashboard/dashboard.html" class="text-secondary text-decoration-none flex-fill py-2">
+            <div><i class="bi bi-house fs-5"></i></div>
+            Início
+          </a>
+          <a href="/Explorar/explorar.html" class="text-accent text-decoration-none flex-fill py-2">
+            <div><i class="bi bi-compass fs-5"></i></div>
+            Explorar
+          </a>
+          <a href="#" class="text-secondary text-decoration-none flex-fill py-2">
+            <div><i class="bi bi-plus-circle fs-5"></i></div>
+            Cadastrar
+          </a>
+          <a href="/Doe/doe.html" class="text-secondary text-decoration-none flex-fill py-2">
+            <div><i class="bi bi-gift fs-5"></i></div>
+            Doe
+          </a>
+          <a href="/Conta/conta.html" class="text-secondary text-decoration-none flex-fill py-2">
+            <div><i class="bi bi-person fs-5"></i></div>
+            Conta
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Offcanvas de Filtros -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filtersOffcanvas" aria-labelledby="filtersOffcanvasLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="filtersOffcanvasLabel">Filtros</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+      </div>
+      <div class="offcanvas-body">
+        <form id="filtersForm" class="vstack gap-4">
+          <!-- Espécie -->
+          <div>
+            <div class="fw-semibold mb-2">Espécie</div>
+            <div class="d-flex flex-wrap gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="spCao" name="species" value="cao">
+                <label class="form-check-label" for="spCao">Cão</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="spGato" name="species" value="gato">
+                <label class="form-check-label" for="spGato">Gato</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sexo -->
+          <div>
+            <div class="fw-semibold mb-2">Sexo</div>
+            <div class="d-flex flex-wrap gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sxMacho" name="sex" value="macho">
+                <label class="form-check-label" for="sxMacho">Macho</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sxFemea" name="sex" value="femea">
+                <label class="form-check-label" for="sxFemea">Fêmea</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Porte -->
+          <div>
+            <div class="fw-semibold mb-2">Porte</div>
+            <div class="d-flex flex-wrap gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="poPequeno" name="size" value="pequeno">
+                <label class="form-check-label" for="poPequeno">Pequeno</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="poMedio" name="size" value="medio">
+                <label class="form-check-label" for="poMedio">Médio</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="poGrande" name="size" value="grande">
+                <label class="form-check-label" for="poGrande">Grande</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Distância -->
+          <div>
+            <div class="fw-semibold mb-2">Distância máxima</div>
+            <div class="d-flex align-items-center gap-3">
+              <input type="range" class="form-range" min="1" max="100" step="1" id="filterDistance" name="distance">
+              <output id="distanceOutput" class="text-secondary small">100 km</output>
+            </div>
+            <div class="text-secondary small">Considera a distância informada pelo anunciante.</div>
+          </div>
+
+          <div class="d-grid gap-2 mt-2">
+            <button type="button" class="btn btn-accent" id="btnApplyFilters">
+              <i class="bi bi-sliders me-1"></i> Aplicar filtros
+            </button>
+            <button type="button" class="btn btn-light" id="btnResetFilters">Limpar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Custom JS -->
+    <script src="explorar.js"></script>
+  </body>
+</html>

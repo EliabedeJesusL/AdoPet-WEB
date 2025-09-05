@@ -1,0 +1,259 @@
+:root{
+  --bg: #ffffff;
+  --page: #f6f7fb;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --primary: #ff8a00;
+  --primary-hover: #ff7a00;
+  --success: #10b981;
+  --error: #ef4444;
+  --radius: 16px;
+}
+
+*{ box-sizing: border-box; }
+
+html, body{ height: 100%; }
+
+body{
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Página centralizada e com respiro */
+.page{
+  min-height: 100dvh;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  background: var(--bg);
+  padding: 0 24px;
+  position: relative;
+}
+
+/* Topbar fixa: botão voltar à esquerda e badge centralizado */
+.topbar{
+  position: fixed;
+  top: 16px;
+  left: 0;
+  right: 0;
+  height: 42px;         /* altura do cabeçalho/badge */
+  z-index: 10;
+}
+
+.icon-btn{
+  height: 38px;
+  width: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #111;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+.icon-btn:hover{ background: rgba(0,0,0,.06); }
+
+/* Back button posicionado à esquerda */
+#btnBack{
+  position: absolute;
+  top: 2px;             /* ajuste fino vertical */
+  left: 16px;
+}
+
+/* Badge (emoji) centralizado */
+.brand{
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #ffd188;
+  display: grid;
+  place-items: center;
+}
+
+/* Centraliza exatamente no meio da viewport */
+.topbar .brand{
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.brand-emoji{ font-size: 18px; }
+
+/* Bloco central (formulário) */
+.wrapper{
+  width: min(720px, 92vw);
+  margin: 0 auto;
+  padding-top: clamp(72px, 14vh, 140px);
+  padding-bottom: clamp(48px, 12vh, 120px);
+}
+
+h1{
+  font-size: clamp(1.9rem, 2.2vw, 2.2rem);
+  margin: 8px 0 10px;
+  font-weight: 700;
+}
+.subtitle{
+  color: var(--muted);
+  margin: 0 0 26px;
+}
+
+form{ margin-top: 6px; }
+
+/* Grupos de campos */
+.group{ margin-bottom: 22px; }
+.group label{
+  display: block;
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.field{
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.field:focus-within{ border-bottom-color: #c9ced6; }
+
+.field input{
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  padding: 8px 0 2px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.field.with-status .status{
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  color: var(--success);
+  opacity: 0;
+  transform: scale(.9);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.field.with-status.valid .status{
+  opacity: 1;
+  transform: scale(1);
+}
+.icon-check{ width: 20px; height: 20px; }
+
+/* Olho de senha */
+.field.with-action .eye svg{
+  width: 22px; height: 22px; color: #6b7280;
+}
+.field.with-action .eye:hover svg{ color: #444; }
+
+/* Estados de erro */
+.group.invalid .field{ border-bottom-color: var(--error); }
+
+/* Termos */
+.terms{
+  font-size: .92rem;
+  color: var(--muted);
+  margin: 6px 0 22px;
+  line-height: 1.45;
+}
+.terms a{
+  color: var(--primary);
+  text-decoration: none;
+}
+.terms a:hover{ text-decoration: underline; }
+
+/* Botão base */
+.btn{
+  width: 100%;
+  border: 0;
+  border-radius: 28px;
+  padding: 16px 18px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .05s ease, background .2s ease, filter .2s ease;
+}
+.btn:active{ transform: translateY(1px); }
+
+.btn-primary{
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(255,138,0,.28);
+}
+.btn-primary:hover{ background: var(--primary-hover); }
+
+/* Botão CTA em pílula */
+.btn-cta{
+  display: block;
+  width: clamp(240px, 60%, 420px);
+  height: 56px;
+  line-height: 56px;
+  border-radius: 999px;
+  margin: 16px auto 0;
+  box-shadow:
+    0 16px 32px rgba(255,138,0,.28),
+    0 6px 14px rgba(255,138,0,.18);
+  text-align: center;
+  letter-spacing: .2px;
+  font-weight: 700;
+  padding: 0 24px;
+}
+
+/* Remove sublinhado do CTA (compatível com <a> e <button>) */
+.btn-cta,
+.btn-cta:link,
+.btn-cta:visited,
+.btn-cta:hover,
+.btn-cta:focus,
+.btn-cta:active,
+button.btn-cta{
+  text-decoration: none;
+}
+
+/* Rodapé do formulário */
+.foot{
+  text-align: center;
+  margin: 18px 0 0;
+  color: var(--muted);
+}
+.foot .link{
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+.foot .link:hover{ text-decoration: underline; }
+
+/* Toast */
+.toast{
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  background: #111827;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.18);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  z-index: 20;
+}
+.toast.show{ opacity: 1; }
+
+/* Mobile */
+@media (max-width: 640px){
+  .brand{ width: 38px; height: 38px; border-radius: 10px; }
+  .topbar{ height: 38px; }
+  .wrapper{ width: min(560px, 92vw); padding-top: 72px; }
+  .btn-cta{ width: 100%; }
+}

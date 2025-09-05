@@ -1,0 +1,69 @@
+:root { --accent: #ff8c00; }
+
+body { background: #f5f6fa; }
+
+/* Acentos e botões */
+.text-accent { color: var(--accent) !important; }
+.btn-accent {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: #ff9f2b;
+  --bs-btn-hover-border-color: #ff9f2b;
+}
+
+/* Cards */
+.card { border-radius: .75rem; }
+
+/* ===== Lista de conversas ===== */
+.chat-list-card .list-group-item { border-left: 0; border-right: 0; }
+.chat-item .avatar {
+  width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
+}
+.chat-item .name { font-weight: 600; }
+.chat-item .snippet { color: #6c757d; font-size: .925rem; }
+.chat-item .time { color: #6c757d; font-size: .8rem; margin-left: .5rem; }
+.chat-item .status i { font-size: 1rem; }
+.chat-item.unread .name { font-weight: 700; }
+.chat-item.unread .snippet { color: #495057; }
+
+/* Badge de não lidas */
+.badge-unread {
+  background: var(--accent);
+  color: #fff;
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px; height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: .75rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* Suporte a truncar texto corretamente */
+.min-w-0 { min-width: 0; }
+
+/* Side menu (padrão do app) */
+.side-menu-card .list-group-item { border-left: 0; border-right: 0; }
+.side-tabs .side-tab { padding: 0.9rem 1rem; }
+.side-tabs .side-icon { font-size: 1.25rem; color: #3b3b3b; }
+.side-tabs .side-tab:hover { background: #f8f9fb; }
+.side-tabs .side-tab.active {
+  color: var(--accent);
+  background: #fff7ee;
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+.side-tabs .side-tab.active .side-icon { color: var(--accent); }
+
+/* Offcanvas arredondado */
+.offcanvas {
+  border-top-left-radius: .75rem;
+  border-bottom-left-radius: .75rem;
+}
+
+/* Espaço do footer mobile */
+@media (max-width: 767.98px) {
+  main { padding-bottom: 72px; }
+}

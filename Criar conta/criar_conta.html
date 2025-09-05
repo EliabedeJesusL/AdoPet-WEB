@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Criar Conta</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./criar_conta.css" />
+</head>
+<body>
+  <main class="page">
+    <!-- Topo: voltar + badge central -->
+    <header class="topbar">
+      <button class="icon-btn" id="btnBack" aria-label="Voltar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="brand" aria-hidden="true">
+        <span class="brand-emoji" role="img" aria-label="pets">🐶🐱</span>
+      </div>
+    </header>
+
+    <!-- Bloco central -->
+    <section class="wrapper">
+      <h1>Criar Conta</h1>
+      <p class="subtitle">Digite seus dados para completar seu cadastro.</p>
+
+      <form id="signupForm" novalidate>
+        <!-- Usuário -->
+        <div class="group" id="group-username">
+          <label for="username">Usuário</label>
+          <div class="field">
+            <input id="username" name="username" type="text" autocomplete="username" required
+                   minlength="3" placeholder="Seu nome de usuário" />
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="group" id="group-email">
+          <label for="email">Email</label>
+          <div class="field with-status">
+            <input id="email" name="email" type="email" autocomplete="email" required
+                   placeholder="seuemail@exemplo.com" />
+            <span class="status" id="emailStatus" aria-hidden="true">
+              <svg class="icon-check" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20.3 7.7 18.9 6.3z"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- Senha -->
+        <div class="group" id="group-password">
+          <label for="password">Senha</label>
+          <div class="field with-action">
+            <input id="password" name="password" type="password" autocomplete="new-password"
+                   required minlength="8" placeholder="Mínimo de 8 caracteres" />
+            <button class="icon-btn eye" id="togglePassword" type="button" aria-label="Mostrar/ocultar senha">
+              <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 110-10 5 5 0 010 10z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Termos (abre em nova guia) -->
+        <p class="terms">
+          Ao continuar, você concorda com nossos<br>
+          <a href="termos.html" target="_blank" rel="noopener noreferrer">Termos de Serviço</a> e
+          <a href="privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a>.
+        </p>
+
+        <!-- CTA: botão de submit (sem href) -->
+        <button type="submit" class="btn btn-primary btn-cta" id="btnCreate">
+          Criar Conta
+        </button>
+
+        <p class="foot">
+          Já tem uma conta?
+          <a href="/Entrar/entrar.html" class="link" rel="noopener noreferrer">Entrar</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="criar_conta.js"></script>
+</body>
+</html>

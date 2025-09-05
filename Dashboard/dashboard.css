@@ -1,0 +1,115 @@
+:root {
+  --accent: #ff8c00; /* laranja */
+}
+
+body {
+  background: #f5f6fa;
+}
+
+/* Acentos e botões */
+.text-accent { color: var(--accent) !important; }
+.btn-accent {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: #ff9f2b;
+  --bs-btn-hover-border-color: #ff9f2b;
+}
+
+/* Cards */
+.card {
+  border-radius: .75rem;
+}
+
+/* Stories */
+.stories { padding: 0 .25rem; }
+.story-btn {
+  background: none;
+  border: 0;
+  text-align: center;
+  width: 78px;
+  color: inherit;
+}
+.story-ring {
+  display: inline-flex;
+  padding: 2px;
+  background: conic-gradient(from 180deg at 50% 50%, #ffd7a2, var(--accent));
+  border-radius: 50%;
+}
+.story-ring img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+
+/* Post */
+.post-card .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-card .btn-action {
+  padding: .25rem .35rem;
+  color: #444;
+}
+.post-card .btn-action:hover { color: var(--accent); }
+.post-card .btn-like.liked i { color: var(--accent); }
+.post-card .btn-save.saved i { color: var(--accent); }
+.post-card img.card-img-top {
+  max-height: 640px;
+  object-fit: cover;
+}
+
+/* Menu lateral (igual ao anterior) */
+.menu-card .menu-item { padding: 0.95rem 1rem; }
+.menu-card .menu-icon { font-size: 1.1rem; color: #3b3b3b; }
+.menu-card .chevron { transition: transform .15s ease; }
+.menu-card .menu-item:hover .chevron { transform: translateX(2px); }
+.menu-card .list-group-item { border-left: 0; border-right: 0; }
+.menu-card .list-group-item:first-child {
+  border-top: 0;
+  border-top-left-radius: .5rem;
+  border-top-right-radius: .5rem;
+}
+.menu-card .list-group-item:last-child {
+  border-bottom: 0;
+  border-bottom-left-radius: .5rem;
+  border-bottom-right-radius: .5rem;
+}
+
+/* Botão sair */
+#btnSair, #btnSairMobile {
+  background: #f1f2f4;
+  border: 1px solid #e7e8ea;
+}
+#btnSair:hover, #btnSairMobile:hover { background: #ebecee; }
+
+/* Offcanvas arredondado */
+.offcanvas {
+  border-top-left-radius: .75rem;
+  border-bottom-left-radius: .75rem;
+}
+
+/* Ajuste do footer mobile para não sobrepor conteúdo */
+@media (max-width: 767.98px) {
+  main { padding-bottom: 72px; }
+}
+
+/* Menu lateral vertical (tabs) */
+.side-menu-card .list-group-item { border-left: 0; border-right: 0; }
+.side-tabs .side-tab { padding: 0.9rem 1rem; }
+.side-tabs .side-icon { font-size: 1.25rem; color: #3b3b3b; }
+.side-tabs .side-tab:hover { background: #f8f9fb; }
+
+/* Estado ativo (mesma ênfase do laranja do app) */
+.side-tabs .side-tab.active {
+  color: var(--accent);
+  background: #fff7ee;
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+.side-tabs .side-tab.active .side-icon { color: var(--accent); }

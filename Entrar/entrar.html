@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Login</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="entrar.css" />
+</head>
+<body>
+  <main class="login">
+    <header class="topbar">
+      <button class="icon-btn" id="btnBack" aria-label="Voltar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Logo central -->
+    <div class="brand-center">
+      <div class="brand" aria-hidden="true">
+        <span class="brand-emoji" role="img" aria-label="logo">🐶🐱</span>
+      </div>
+    </div>
+
+    <section class="panel">
+      <div class="panel-inner">
+        <h1>Login</h1>
+        <p class="subtitle">Digite seu email e senha</p>
+
+        <form id="loginForm" novalidate>
+          <!-- Email -->
+          <div class="group" id="group-email">
+            <label for="email">Email</label>
+            <div class="field with-status">
+              <input id="email" name="email" type="email" autocomplete="email" inputmode="email"
+                     required placeholder="joao@email.com" />
+              <span class="status" aria-hidden="true">
+                <svg class="icon-check" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M9 16.2l-3.5-3.5-1.4 1.4L9 19 20.3 7.7 18.9 6.3z"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Senha -->
+          <div class="group" id="group-password">
+            <label for="password">Senha</label>
+            <div class="field with-action">
+              <input id="password" name="password" type="password" autocomplete="current-password"
+                     required minlength="8" placeholder="Sua senha" />
+              <button class="icon-btn eye" id="togglePassword" type="button" aria-label="Mostrar senha">
+                <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 110-10 5 5 0 010 10z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="help-row">
+            <a href="recuperar-senha.html" class="muted-link" target="_blank" rel="noopener noreferrer">
+              Esqueceu a senha?
+            </a>
+          </div>
+
+          <!-- Botão de submit com estilo pílula -->
+          <button type="submit" class="btn btn-primary btn-cta">Entrar</button>
+
+          <p class="foot">
+            Ainda não tem uma conta?
+            <a href="/Criar conta/criar_conta.html" class="link" rel="noopener noreferrer">Criar conta</a>
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+  <script src="entrar.js" defer></script>
+</body>
+</html>
