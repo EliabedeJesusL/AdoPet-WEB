@@ -75,3 +75,17 @@ body {
 @media (max-width: 767.98px) {
   main { padding-bottom: 72px; }
 }
+
+/* Remover bordas azuis do side menu (ativo/foco) */
+.side-tabs .list-group-item{
+  --bs-list-group-active-border-color: transparent; /* sem linha azul no ativo */
+}
+.side-tabs .list-group-item.active{
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+.side-tabs .side-tab:focus,
+.side-tabs .side-tab:focus-visible{
+  outline: none !important;
+  box-shadow: none !important;
+}

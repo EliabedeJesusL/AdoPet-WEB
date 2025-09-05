@@ -113,3 +113,29 @@ body {
   font-weight: 600;
 }
 .side-tabs .side-tab.active .side-icon { color: var(--accent); }
+
+/* ===== Remover a “linha azul” do side menu (Bootstrap active/focus) ===== */
+.side-tabs .list-group-item{
+  /* Override das variáveis do Bootstrap para o item ativo */
+  --bs-list-group-active-bg: #fff7ee; /* combina com seu fundo ativo */
+  --bs-list-group-active-color: var(--accent);
+  --bs-list-group-active-border-color: transparent; /* remove borda azul */
+}
+
+.side-tabs .list-group-item.active{
+  border-color: transparent !important;
+  box-shadow: none !important;   /* elimina qualquer glow */
+}
+
+/* Mantém apenas o marcador laranja à esquerda */
+.side-tabs .side-tab.active{
+  border-left: 3px solid var(--accent);
+}
+
+/* Remove anel azul de foco (opção acessível com contorno sutil laranja) */
+.side-tabs .side-tab:focus,
+.side-tabs .side-tab:focus-visible{
+  box-shadow: none !important;
+  outline: 2px solid rgba(255,140,0,.35);
+  outline-offset: 2px;
+}
