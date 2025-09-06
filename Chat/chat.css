@@ -63,6 +63,48 @@ body { background: #f5f6fa; }
   border-bottom-left-radius: .75rem;
 }
 
+/* Chat ativo no header: fundo laranja claro + ícone laranja */
+header a[aria-label="Mensagens"][aria-current="page"],
+header a[aria-label="Mensagens"].active,
+.chat-page header a[aria-label="Mensagens"] {
+  background-color: #fff7ee !important; /* mesmo padrão do side menu */
+  border-color: var(--accent) !important;
+  color: var(--accent) !important; /* fallback se houver texto */
+}
+
+/* Garante o ícone laranja */
+header a[aria-label="Mensagens"][aria-current="page"] i,
+header a[aria-label="Mensagens"].active i,
+.chat-page header a[aria-label="Mensagens"] i {
+  color: var(--accent) !important;
+}
+
+/* Mantém o mesmo visual quando passar mouse/foco/clique */
+header a[aria-label="Mensagens"][aria-current="page"]:hover,
+header a[aria-label="Mensagens"][aria-current="page"]:focus,
+header a[aria-label="Mensagens"][aria-current="page"]:active,
+header a[aria-label="Mensagens"].active:hover,
+header a[aria-label="Mensagens"].active:focus,
+header a[aria-label="Mensagens"].active:active,
+.chat-page header a[aria-label="Mensagens"]:hover,
+.chat-page header a[aria-label="Mensagens"]:focus,
+.chat-page header a[aria-label="Mensagens"]:active {
+  background-color: #fff7ee !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+/* Se em alguma página você usar o estilo icon-btn para o Chat */
+.icon-btn[aria-label="Mensagens"].active,
+.chat-page .icon-btn[aria-label="Mensagens"] {
+  background-color: #fff7ee !important;
+  border-color: var(--accent) !important;
+}
+.icon-btn[aria-label="Mensagens"].active i,
+.chat-page .icon-btn[aria-label="Mensagens"] i {
+  color: var(--accent) !important;
+}
+
 /* Espaço do footer mobile */
 @media (max-width: 767.98px) {
   main { padding-bottom: 72px; }

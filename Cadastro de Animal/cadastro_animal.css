@@ -1,0 +1,90 @@
+:root { --accent: #ff8c00; }
+
+body { background: #f5f6fa; }
+
+/* Acentos e botões */
+.text-accent { color: var(--accent) !important; }
+.btn-accent {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: #ff9f2b;
+  --bs-btn-hover-border-color: #ff9f2b;
+}
+#btnFilters.active { color: var(--accent); border-color: var(--accent); }
+
+/* Cards */
+.card { border-radius: .75rem; }
+
+/* Instituição card */
+.inst-card .logo-box { background: #fff; }
+.inst-card .card-body { padding: 1rem 1rem 1.25rem; }
+.inst-card .card-title { font-size: 1rem; font-weight: 600; }
+
+/* CTA Doar */
+.btn-cta {
+  display: block;
+  background: var(--accent);
+  color: #fff !important;
+  height: 44px;
+  line-height: 44px;
+  border-radius: 999px;
+  width: clamp(160px, 80%, 220px);
+  margin: 6px auto 0;
+  box-shadow: 0 12px 28px rgba(255,138,0,.25), 0 6px 14px rgba(255,138,0,.15);
+  text-align: center;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+.btn-cta:hover { background: #ff9f2b; }
+
+/* Side menu (padrão do app) */
+.side-menu-card .list-group-item { border-left: 0; border-right: 0; }
+.side-tabs .side-tab { padding: 0.9rem 1rem; }
+.side-tabs .side-icon { font-size: 1.25rem; color: #3b3b3b; }
+.side-tabs .side-tab:hover { background: #f8f9fb; }
+.side-tabs .side-tab.active {
+  color: var(--accent);
+  background: #fff7ee;
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+.side-tabs .side-tab.active .side-icon { color: var(--accent); }
+
+/* Offcanvas arredondado */
+.offcanvas { border-top-left-radius: .75rem; border-bottom-left-radius: .75rem; }
+
+/* Espaço do footer mobile */
+@media (max-width: 767.98px) {
+  main { padding-bottom: 72px; }
+}
+
+/* ============================
+   Remover bordas azuis no side menu (ativo/foco)
+   e as linhas superior/inferior do item ativo
+   ============================ */
+
+/* Evita que o item ativo ganhe borda azul do Bootstrap */
+.side-tabs .list-group-item{
+  --bs-list-group-active-bg: #fff7ee;
+  --bs-list-group-active-color: var(--accent);
+  --bs-list-group-active-border-color: transparent; /* sem borda azul */
+}
+
+/* Remove qualquer borda + ring do ativo e do foco */
+.side-tabs .list-group-item.active,
+.side-tabs .list-group-item:focus,
+.side-tabs .list-group-item:focus-visible {
+  border-color: transparent !important;            /* sem linhas azuis */
+  border-top-color: transparent !important;        /* sem linha azul em cima */
+  border-bottom-color: transparent !important;     /* sem linha azul em baixo */
+  box-shadow: none !important;                     /* sem glow */
+  outline: none !important;
+}
+
+/* Mantém apenas o marcador laranja à esquerda */
+.side-tabs .side-tab.active { border-left: 3px solid var(--accent); }
+
+/* Opcional: remove a linha do primeiro e do último item no card (bordas do flush) */
+.side-menu-card .list-group-flush > .list-group-item:first-child { border-top: 0 !important; }
+.side-menu-card .list-group-flush > .list-group-item:last-child  { border-bottom: 0 !important; }

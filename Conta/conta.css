@@ -29,6 +29,8 @@ body {
 .side-tabs .side-tab { padding: 0.9rem 1rem; }
 .side-tabs .side-icon { font-size: 1.25rem; color: #3b3b3b; }
 .side-tabs .side-tab:hover { background: #f8f9fb; }
+
+/* Estado ativo (mesma ênfase do laranja do app) */
 .side-tabs .side-tab.active {
   color: var(--accent);
   background: #fff7ee;
@@ -36,6 +38,24 @@ body {
   font-weight: 600;
 }
 .side-tabs .side-tab.active .side-icon { color: var(--accent); }
+
+/* ===== Remover a “linha azul” do side menu (Bootstrap active/focus) – igual ao Feed ===== */
+.side-tabs .list-group-item{
+  --bs-list-group-active-bg: #fff7ee;
+  --bs-list-group-active-color: var(--accent);
+  --bs-list-group-active-border-color: transparent;
+}
+.side-tabs .list-group-item.active{
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+/* Foco acessível, como no Feed */
+.side-tabs .side-tab:focus,
+.side-tabs .side-tab:focus-visible{
+  box-shadow: none !important;
+  outline: 2px solid rgba(255,140,0,.35);
+  outline-offset: 2px;
+}
 
 /* ===== Opções da conta ===== */
 .account-card .account-item { padding: 0.95rem 1rem; }
@@ -66,18 +86,4 @@ body {
 /* Espaço no mobile para o bottom nav não cobrir conteúdo */
 @media (max-width: 767.98px) {
   main { padding-bottom: 72px; }
-}
-
-/* ===== Remover bordas/anel azul do side menu (ativo/foco) ===== */
-.side-tabs .list-group-item{
-  --bs-list-group-active-border-color: transparent; /* sem linha azul no ativo */
-}
-.side-tabs .list-group-item.active{
-  border-color: transparent !important;
-  box-shadow: none !important; /* elimina qualquer glow */
-}
-.side-tabs .side-tab:focus,
-.side-tabs .side-tab:focus-visible{
-  outline: none !important;
-  box-shadow: none !important;
 }
