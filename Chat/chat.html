@@ -12,22 +12,17 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-
     <!-- Bootstrap Icons -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="chat.css" />
   </head>
-  <body>
-    <!-- Header padronizado (mesmo do Feed) -->
+  <body class="chat-page">
+    <!-- Header (idêntico ao exemplo do Feed) -->
     <header class="border-bottom bg-white">
       <div class="container-xxl py-3 d-flex align-items-center justify-content-between gap-3">
         <div class="d-flex align-items-center gap-3">
-          <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="/Dashboard/dashboard.html">
+          <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="#">
             <i class="bi bi-heart-fill text-accent"></i>
             <span class="fw-semibold">Adopet</span>
           </a>
@@ -41,11 +36,13 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas" aria-label="Abrir menu">
+          <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas">
             <i class="bi bi-list"></i>
           </button>
-          <button class="btn btn-outline-secondary" aria-label="Notificações"><i class="bi bi-bell"></i></button>
-          <a class="btn btn-outline-secondary active" href="/Chat/chat.html" aria-label="Mensagens">
+          <button class="btn btn-outline-secondary" aria-label="Notificações">
+            <i class="bi bi-bell"></i>
+          </button>
+          <a class="btn btn-outline-secondary" href="/Chat/chat.html" aria-label="Mensagens">
             <i class="bi bi-chat-dots"></i>
           </a>
         </div>
@@ -55,18 +52,15 @@
     <!-- Main -->
     <main class="container-xxl my-4">
       <div class="row g-4">
-        <!-- Lista de contatos (esquerda) -->
+        <!-- Lista de contatos -->
         <section class="col-12 col-lg-8 order-2 order-lg-1">
           <div class="d-flex align-items-center justify-content-between mb-2">
             <h1 class="h5 m-0">Lista de Contatos</h1>
           </div>
 
-          <!-- Card da lista de conversas -->
           <div class="card shadow-sm chat-list-card">
             <div class="list-group list-group-flush chat-list">
-
-              <!-- Item 1 -->
-              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item">
+              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item" data-chat-id="geopart">
                 <img class="avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=120&auto=format&fit=crop" alt="Avatar Geopart Etdsien" />
                 <div class="flex-grow-1 min-w-0">
                   <div class="d-flex align-items-center justify-content-between">
@@ -80,8 +74,7 @@
                 </div>
               </a>
 
-              <!-- Item 2 (com não lidas) -->
-              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item unread">
+              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item unread" data-chat-id="eliabe">
                 <img class="avatar" src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=120&auto=format&fit=crop" alt="Avatar Eliabe de Jesus" />
                 <div class="flex-grow-1 min-w-0">
                   <div class="d-flex align-items-center justify-content-between">
@@ -95,8 +88,7 @@
                 </div>
               </a>
 
-              <!-- Item 3 -->
-              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item">
+              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item" data-chat-id="elisia1">
                 <img class="avatar" src="https://images.unsplash.com/photo-1519340241572-2968a76fdbf3?q=80&w=120&auto=format&fit=crop" alt="Avatar Elisia Justin" />
                 <div class="flex-grow-1 min-w-0">
                   <div class="d-flex align-items-center justify-content-between">
@@ -110,8 +102,7 @@
                 </div>
               </a>
 
-              <!-- Item 4 -->
-              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item">
+              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item" data-chat-id="geopart2">
                 <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=120&auto=format&fit=crop" alt="Avatar Geopart Etdsien" />
                 <div class="flex-grow-1 min-w-0">
                   <div class="d-flex align-items-center justify-content-between">
@@ -125,8 +116,7 @@
                 </div>
               </a>
 
-              <!-- Item 5 (com não lidas) -->
-              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item unread">
+              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item unread" data-chat-id="stevano">
                 <img class="avatar" src="https://images.unsplash.com/photo-1614280027210-4b30146a3665?q=80&w=120&auto=format&fit=crop" alt="Avatar Stevano Clirover" />
                 <div class="flex-grow-1 min-w-0">
                   <div class="d-flex align-items-center justify-content-between">
@@ -140,8 +130,7 @@
                 </div>
               </a>
 
-              <!-- Item 6 -->
-              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item">
+              <a href="/Mensagens/conversa.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 chat-item" data-chat-id="elisia2">
                 <img class="avatar" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=120&auto=format&fit=crop" alt="Avatar Elisia Justin" />
                 <div class="flex-grow-1 min-w-0">
                   <div class="d-flex align-items-center justify-content-between">
@@ -154,7 +143,6 @@
                   </div>
                 </div>
               </a>
-
             </div>
           </div>
         </section>
@@ -162,28 +150,23 @@
         <!-- MENU LATERAL DIREITO (padronizado) -->
         <aside class="col-12 col-lg-4 order-1 order-lg-2">
           <div class="sticky-lg-top" style="top: 1.25rem">
-            <!-- Versão desktop -->
+            <!-- Side menu (desktop) -->
             <div class="card shadow-sm d-none d-lg-block side-menu-card">
               <nav class="list-group list-group-flush side-tabs">
-                <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                  <i class="bi bi-house side-icon"></i>
-                  <span>Início</span>
+                <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="home">
+                  <i class="bi bi-house side-icon"></i><span>Início</span>
                 </a>
-                <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                  <i class="bi bi-compass side-icon"></i>
-                  <span>Explorar</span>
+                <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="explore">
+                  <i class="bi bi-compass side-icon"></i><span>Explorar</span>
                 </a>
-                <a href="/Cadastro de Animal/cadastro_animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                  <i class="bi bi-plus-circle side-icon"></i>
-                  <span>Cadastrar</span>
+                <a href="/Cadastro de Animal/cadastro_animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="cadastrar">
+                  <i class="bi bi-plus-circle side-icon"></i><span>Cadastrar</span>
                 </a>
-                <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                  <i class="bi bi-gift side-icon"></i>
-                  <span>Doe</span>
+                <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="doe">
+                  <i class="bi bi-gift side-icon"></i><span>Doe</span>
                 </a>
-                <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                  <i class="bi bi-person side-icon"></i>
-                  <span>Conta</span>
+                <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="conta">
+                  <i class="bi bi-person side-icon"></i><span>Conta</span>
                 </a>
               </nav>
             </div>
@@ -196,19 +179,19 @@
               </div>
               <div class="offcanvas-body p-0">
                 <nav class="list-group list-group-flush side-tabs">
-                  <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="home">
                     <i class="bi bi-house side-icon"></i><span>Início</span>
                   </a>
-                  <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="explore">
                     <i class="bi bi-compass side-icon"></i><span>Explorar</span>
                   </a>
-                  <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <a href="/Cadastro de Animal/cadastro_animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="cadastrar">
                     <i class="bi bi-plus-circle side-icon"></i><span>Cadastrar</span>
                   </a>
-                  <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="doe">
                     <i class="bi bi-gift side-icon"></i><span>Doe</span>
                   </a>
-                  <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                  <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="conta">
                     <i class="bi bi-person side-icon"></i><span>Conta</span>
                   </a>
                 </nav>
@@ -224,24 +207,19 @@
       <div class="container-fluid px-3">
         <div class="d-flex justify-content-between w-100 text-center small">
           <a href="/Dashboard/dashboard.html" class="text-secondary text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-house fs-5"></i></div>
-            Início
+            <div><i class="bi bi-house fs-5"></i></div>Início
           </a>
           <a href="/Explorar/explorar.html" class="text-secondary text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-compass fs-5"></i></div>
-            Explorar
+            <div><i class="bi bi-compass fs-5"></i></div>Explorar
           </a>
-          <a href="#" class="text-accent text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-plus-circle fs-5"></i></div>
-            Cadastrar
+          <a href="/Cadastro de Animal/cadastro_animal.html" class="text-accent text-decoration-none flex-fill py-2">
+            <div><i class="bi bi-plus-circle fs-5"></i></div>Cadastrar
           </a>
           <a href="/Doe/doe.html" class="text-secondary text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-gift fs-5"></i></div>
-            Doe
+            <div><i class="bi bi-gift fs-5"></i></div>Doe
           </a>
           <a href="/Conta/conta.html" class="text-secondary text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-person fs-5"></i></div>
-            Conta
+            <div><i class="bi bi-person fs-5"></i></div>Conta
           </a>
         </div>
       </div>
@@ -253,8 +231,6 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
-
-    <!-- Custom JS (opcional) -->
     <script src="chat.js"></script>
   </body>
 </html>

@@ -4,12 +4,12 @@ body { background: #f5f6fa; }
 
 /* Acentos e botões */
 .text-accent { color: var(--accent) !important; }
-.btn-accent {
-  --bs-btn-color: #fff;
-  --bs-btn-bg: var(--accent);
-  --bs-btn-border-color: var(--accent);
-  --bs-btn-hover-bg: #ff9f2b;
-  --bs-btn-hover-border-color: #ff9f2b;
+.btn-accent{
+  --bs-btn-color:#fff;
+  --bs-btn-bg:var(--accent);
+  --bs-btn-border-color:var(--accent);
+  --bs-btn-hover-bg:#ff9f2b;
+  --bs-btn-hover-border-color:#ff9f2b;
 }
 
 /* Cards */
@@ -17,9 +17,7 @@ body { background: #f5f6fa; }
 
 /* ===== Lista de conversas ===== */
 .chat-list-card .list-group-item { border-left: 0; border-right: 0; }
-.chat-item .avatar {
-  width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
-}
+.chat-item .avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
 .chat-item .name { font-weight: 600; }
 .chat-item .snippet { color: #6c757d; font-size: .925rem; }
 .chat-item .time { color: #6c757d; font-size: .8rem; margin-left: .5rem; }
@@ -28,7 +26,7 @@ body { background: #f5f6fa; }
 .chat-item.unread .snippet { color: #495057; }
 
 /* Badge de não lidas */
-.badge-unread {
+.badge-unread{
   background: var(--accent);
   color: #fff;
   display: inline-grid;
@@ -36,12 +34,10 @@ body { background: #f5f6fa; }
   min-width: 22px; height: 22px;
   padding: 0 6px;
   border-radius: 999px;
-  font-size: .75rem;
-  line-height: 1;
-  font-weight: 700;
+  font-size: .75rem; line-height: 1; font-weight: 700;
 }
 
-/* Suporte a truncar texto corretamente */
+/* Util */
 .min-w-0 { min-width: 0; }
 
 /* Side menu (padrão do app) */
@@ -58,54 +54,42 @@ body { background: #f5f6fa; }
 .side-tabs .side-tab.active .side-icon { color: var(--accent); }
 
 /* Offcanvas arredondado */
-.offcanvas {
-  border-top-left-radius: .75rem;
-  border-bottom-left-radius: .75rem;
-}
+.offcanvas { border-top-left-radius: .75rem; border-bottom-left-radius: .75rem; }
 
-/* Chat ativo no header: fundo laranja claro + ícone laranja */
-header a[aria-label="Mensagens"][aria-current="page"],
-header a[aria-label="Mensagens"].active,
-.chat-page header a[aria-label="Mensagens"] {
-  background-color: #fff7ee !important; /* mesmo padrão do side menu */
-  border-color: var(--accent) !important;
-  color: var(--accent) !important; /* fallback se houver texto */
+/* ===== Remover “bordas azuis” do side menu (ativo/foco) ===== */
+.side-tabs .list-group-item{
+  --bs-list-group-active-bg:#fff7ee;
+  --bs-list-group-active-color:var(--accent);
+  --bs-list-group-active-border-color:transparent;
 }
-
-/* Garante o ícone laranja */
-header a[aria-label="Mensagens"][aria-current="page"] i,
-header a[aria-label="Mensagens"].active i,
-.chat-page header a[aria-label="Mensagens"] i {
-  color: var(--accent) !important;
+.side-tabs .list-group-item.active{
+  border-color:transparent !important;
+  box-shadow:none !important;
 }
+.side-tabs .side-tab:focus,
+.side-tabs .side-tab:focus-visible{
+  box-shadow:none !important;
+  outline:2px solid rgba(255,140,0,.35);
+  outline-offset:2px;
+}
+/* Remove linha do primeiro/último item do flush */
+.side-menu-card .list-group-flush > .list-group-item:first-child{ border-top:0 !important; }
+.side-menu-card .list-group-flush > .list-group-item:last-child{ border-bottom:0 !important; }
 
-/* Mantém o mesmo visual quando passar mouse/foco/clique */
-header a[aria-label="Mensagens"][aria-current="page"]:hover,
-header a[aria-label="Mensagens"][aria-current="page"]:focus,
-header a[aria-label="Mensagens"][aria-current="page"]:active,
-header a[aria-label="Mensagens"].active:hover,
-header a[aria-label="Mensagens"].active:focus,
-header a[aria-label="Mensagens"].active:active,
+/* ===== Chat ativo no header (igual ao padrão do app) ===== */
+.chat-page header a[aria-label="Mensagens"]{
+  background-color:#fff7ee !important;
+  border-color:var(--accent) !important;
+  color:var(--accent) !important;
+}
+.chat-page header a[aria-label="Mensagens"] i{ color:var(--accent) !important; }
 .chat-page header a[aria-label="Mensagens"]:hover,
 .chat-page header a[aria-label="Mensagens"]:focus,
-.chat-page header a[aria-label="Mensagens"]:active {
-  background-color: #fff7ee !important;
-  border-color: var(--accent) !important;
-  color: var(--accent) !important;
-}
-
-/* Se em alguma página você usar o estilo icon-btn para o Chat */
-.icon-btn[aria-label="Mensagens"].active,
-.chat-page .icon-btn[aria-label="Mensagens"] {
-  background-color: #fff7ee !important;
-  border-color: var(--accent) !important;
-}
-.icon-btn[aria-label="Mensagens"].active i,
-.chat-page .icon-btn[aria-label="Mensagens"] i {
-  color: var(--accent) !important;
+.chat-page header a[aria-label="Mensagens"]:active{
+  background-color:#fff7ee !important;
+  border-color:var(--accent) !important;
+  color:var(--accent) !important;
 }
 
 /* Espaço do footer mobile */
-@media (max-width: 767.98px) {
-  main { padding-bottom: 72px; }
-}
+@media (max-width: 767.98px) { main { padding-bottom: 72px; } }
