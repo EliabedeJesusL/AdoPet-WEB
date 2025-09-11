@@ -11,10 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Redireciona para o cadastro específico
   btnJuridica?.addEventListener('click', () => {
-    window.location.href = '/Cadastro/cadastro-juridico.html';
+    window.location.href = '/Cadastro Jurídico/cadastro_juridico.html';
   });
 
   btnFisica?.addEventListener('click', () => {
-    window.location.href = '/Cadastro/cadastro-fisico.html';
+    window.location.href = '/Cadastro Físico/cadastro_fisico.html';
   });
 });
