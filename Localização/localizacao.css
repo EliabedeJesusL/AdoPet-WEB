@@ -1,0 +1,24 @@
+:root { --accent: #ff8c00; }
+
+body { background: #f5f6fa; }
+
+/* Cards no padrão */
+.card { border-radius: .75rem; }
+
+/* CTA laranja arredondado (padrão) */
+.btn-cta{
+  background: var(--accent);
+  color: #fff !important;
+  border-radius: 999px;
+  padding: 12px 0;
+  font-weight: 700;
+  box-shadow: 0 12px 28px rgba(255,138,0,.25), 0 6px 14px rgba(255,138,0,.15);
+  transition: background .2s ease;
+}
+.btn-cta:hover{ background: #ff9f2b; }
+.btn-cta:disabled{ opacity: .65; cursor: not-allowed; }
+
+/* Espaçamento responsivo coerente com o app */
+@media (max-width: 767.98px){
+  main{ padding-bottom: 16px; }
+}

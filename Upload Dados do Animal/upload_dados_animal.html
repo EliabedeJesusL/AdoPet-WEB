@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cadastrar Animal - Adopet</title>
+    <title>Upload de Fotos - Adopet</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -15,7 +15,7 @@
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="cadastro_animal.css" />
+    <link rel="stylesheet" href="upload_dados_animal.css" />
   </head>
   <body>
     <!-- Header (padrão do app) -->
@@ -26,6 +26,7 @@
             <i class="bi bi-heart-fill text-accent"></i>
             <span class="fw-semibold">Adopet</span>
           </a>
+
           <form class="d-none d-md-block" role="search" style="min-width: 360px;">
             <div class="input-group">
               <span class="input-group-text bg-body"><i class="bi bi-search"></i></span>
@@ -35,6 +36,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
+          <!-- Menu (mobile) -->
           <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas" aria-label="Abrir menu">
             <i class="bi bi-list"></i>
           </button>
@@ -58,78 +60,69 @@
             <button class="btn btn-outline-secondary" id="btnVoltar" aria-label="Voltar">
               <i class="bi bi-arrow-left"></i>
             </button>
-            <h1 class="h5 m-0">Cadastrar Animal</h1>
+            <h1 class="h5 m-0">Upload de Fotos</h1>
           </div>
 
           <!-- Card do formulário -->
           <article class="card shadow-sm">
             <div class="card-body">
               <div class="d-none d-md-flex align-items-center justify-content-between mb-3">
-                <h1 class="h5 m-0">Cadastrar Animal</h1>
+                <h1 class="h5 m-0">Upload de Fotos</h1>
               </div>
 
-              <form id="formCadastro" class="vstack gap-3" novalidate>
-                <!-- Espécie -->
-                <div>
-                  <label for="especie" class="form-label">Espécie</label>
-                  <select id="especie" class="form-select" required>
-                    <option value="">Selecione</option>
-                    <option value="cao">Cachorro</option>
-                    <option value="gato">Gato</option>
-                    <option value="outro">Outro</option>
-                  </select>
-                  <div class="invalid-feedback">Escolha a espécie.</div>
-                </div>
+              <!-- Alerts dinâmicos -->
+              <div id="formAlerts" class="mb-3" aria-live="polite"></div>
 
-                <!-- Raça (com sugestões dinâmicas) -->
+              <form id="formUpload" class="vstack gap-4" novalidate>
+                <!-- Upload animal -->
                 <div>
-                  <label for="raca" class="form-label">Raça</label>
-                  <input id="raca" class="form-control" list="listaRacas" placeholder="Ex.: Bulldog" required />
-                  <datalist id="listaRacas"></datalist>
-                  <div class="invalid-feedback">Informe a raça (ou “SRD/Vira-lata”).</div>
-                </div>
-
-                <!-- Idade -->
-                <div>
-                  <label for="idade" class="form-label">Idade (em meses)</label>
-                  <input id="idade" type="number" inputmode="numeric" min="0" max="360" class="form-control" placeholder="Ex.: 23" required />
-                  <div class="invalid-feedback">Informe a idade (0 a 360 meses).</div>
-                </div>
-
-                <!-- Nome -->
-                <div>
-                  <label for="nome" class="form-label">Nome</label>
-                  <input id="nome" type="text" class="form-control" placeholder="Ex.: Totó" minlength="2" maxlength="40" required />
-                  <div class="invalid-feedback">Informe um nome (mín. 2 caracteres).</div>
-                </div>
-
-                <!-- Descrição -->
-                <div>
-                  <label for="descricao" class="form-label d-flex align-items-center justify-content-between">
-                    <span>Descrição</span>
-                    <small class="text-secondary" id="descCounter">0/500</small>
-                  </label>
-                  <textarea id="descricao" class="form-control" rows="4" maxlength="500" placeholder="Um cão gentil, dócil, amável que está à procura de um dono." required></textarea>
-                  <div class="invalid-feedback">Escreva uma breve descrição (até 500 caracteres).</div>
-                </div>
-
-                <!-- Histórico Médico -->
-                <div>
-                  <label for="historico" class="form-label d-flex align-items-center justify-content-between">
-                    <span>Histórico Médico</span>
-                    <small class="text-secondary" id="histCounter">0/500</small>
-                  </label>
-                  <textarea id="historico" class="form-control" rows="3" maxlength="500" placeholder="Vacinas, castração, medicações..."></textarea>
-                </div>
-
-                <!-- Ações -->
-                <div class="pt-2">
-                  <a href="/Upload Dados do Animal/upload_dados_animal.html" id="btnAvancar" class="btn btn-accent w-100 py-2" disabled>Avançar</a>
-                  <div class="text-center mt-2">
-                    <button type="button" class="btn btn-link small text-secondary" id="btnSalvarRascunho">
-                      Salvar rascunho
-                    </button>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h2 class="h6 fw-semibold mb-1">Fotos do Animal</h2>
+                      <p class="text-muted small mb-2">Adicione fotos claras e nítidas (mín. 1, máx. 8, até 5 MB cada).</p>
+                    </div>
+                    <span class="badge bg-light text-secondary" id="countAnimal" aria-live="polite">0/8</span>
                   </div>
+
+                  <div id="boxAnimal" class="upload-box text-center" role="button" tabindex="0" aria-label="Área para fazer upload das fotos do animal">
+                    <i class="bi bi-cloud-arrow-up display-6 d-block mb-2 text-secondary"></i>
+                    <button type="button" id="btnShotAnimal" class="btn btn-link fw-semibold">Tirar fotos do animal</button>
+                    <div class="text-muted small my-1">ou</div>
+                    <button type="button" id="btnPickAnimal" class="btn btn-outline-primary btn-sm">Buscar na galeria</button>
+                    <div class="text-muted small mt-2">Arraste e solte imagens aqui</div>
+                    <input id="inputAnimal" class="visually-hidden" type="file" accept="image/*" multiple capture="environment" />
+                  </div>
+
+                  <div id="previewAnimal" class="thumbs mt-3" aria-live="polite"></div>
+                </div>
+
+                <!-- Upload cartão -->
+                <div>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h2 class="h6 fw-semibold mb-1">Cartão de Vacinação (opcional)</h2>
+                      <p class="text-muted small mb-2">Fotos do registro veterinário (máx. 8, até 5 MB cada).</p>
+                    </div>
+                    <span class="badge bg-light text-secondary" id="countVacina" aria-live="polite">0/8</span>
+                  </div>
+
+                  <div id="boxVacina" class="upload-box text-center" role="button" tabindex="0" aria-label="Área para fazer upload do cartão de vacinação">
+                    <i class="bi bi-cloud-arrow-up display-6 d-block mb-2 text-secondary"></i>
+                    <button type="button" id="btnShotVacina" class="btn btn-link fw-semibold">Tirar foto</button>
+                    <div class="text-muted small my-1">ou</div>
+                    <button type="button" id="btnPickVacina" class="btn btn-outline-primary btn-sm">Buscar na galeria</button>
+                    <div class="text-muted small mt-2">Arraste e solte imagens aqui</div>
+                    <input id="inputVacina" class="visually-hidden" type="file" accept="image/*" multiple capture="environment" />
+                  </div>
+
+                  <div id="previewVacina" class="thumbs mt-3" aria-live="polite"></div>
+                </div>
+
+                <!-- Botão salvar -->
+                <div class="pt-2">
+                  <a href="/Animal Cadastrado/animal_cadastrado.html" id="btnAvancar" class="btn btn-accent w-100 py-2 disabled" aria-disabled="true">
+                    Salvar
+                  </a>
                 </div>
               </form>
             </div>
@@ -172,21 +165,11 @@
               </div>
               <div class="offcanvas-body p-0">
                 <nav class="list-group list-group-flush side-tabs">
-                  <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                    <i class="bi bi-house side-icon"></i><span>Início</span>
-                  </a>
-                  <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                    <i class="bi bi-compass side-icon"></i><span>Explorar</span>
-                  </a>
-                  <a href="/Cadastrar/cadastrar-animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" aria-current="page">
-                    <i class="bi bi-plus-circle side-icon"></i><span>Cadastrar</span>
-                  </a>
-                  <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                    <i class="bi bi-gift side-icon"></i><span>Doe</span>
-                  </a>
-                  <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
-                    <i class="bi bi-person side-icon"></i><span>Conta</span>
-                  </a>
+                  <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-house side-icon"></i><span>Início</span></a>
+                  <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-compass side-icon"></i><span>Explorar</span></a>
+                  <a href="/Cadastrar/cadastrar-animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" aria-current="page"><i class="bi bi-plus-circle side-icon"></i><span>Cadastrar</span></a>
+                  <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-gift side-icon"></i><span>Doe</span></a>
+                  <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-person side-icon"></i><span>Conta</span></a>
                 </nav>
               </div>
             </div>
@@ -205,7 +188,7 @@
           <a href="/Explorar/explorar.html" class="text-secondary text-decoration-none flex-fill py-2">
             <div><i class="bi bi-compass fs-5"></i></div>Explorar
           </a>
-          <a href="/Cadastrar/cadastrar-animal.html" class="text-accent text-decoration-none flex-fill py-2">
+          <a href="/Cadastrar/cadastrar-animal.html" class="text-accent text-decoration-none flex-fill py-2" aria-current="page">
             <div><i class="bi bi-plus-circle fs-5"></i></div>Cadastrar
           </a>
           <a href="/Doe/doe.html" class="text-secondary text-decoration-none flex-fill py-2">
@@ -225,6 +208,6 @@
       crossorigin="anonymous"
     ></script>
     <!-- Custom JS -->
-    <script src="cadastro_animal.js"></script>
+    <script src="upload_dados_animal.js"></script>
   </body>
 </html>

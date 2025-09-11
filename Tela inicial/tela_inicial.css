@@ -104,6 +104,18 @@ h1{
 .btn-primary:hover{ background: var(--primary-hover); }
 .btn-secondary{ opacity: .94; }
 
+/* Botão “Entrar sem login” (ghost) */
+.btn-ghost{
+  background: #fff;
+  color: var(--text);
+  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+.btn-ghost:hover{
+  background: #f9fafb;
+}
+
 /* Divisor */
 .divider{
   display: flex;

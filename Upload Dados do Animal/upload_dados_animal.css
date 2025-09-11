@@ -1,0 +1,107 @@
+:root { --accent: #ff8c00; }
+
+body { background: #f5f6fa; }
+
+/* Acentos e botões */
+.text-accent { color: var(--accent) !important; }
+.btn-accent {
+  --bs-btn-color:#fff;
+  --bs-btn-bg:var(--accent);
+  --bs-btn-border-color:var(--accent);
+  --bs-btn-hover-bg:#ff9f2b;
+  --bs-btn-hover-border-color:#ff9f2b;
+}
+
+/* Cards */
+.card { border-radius: .75rem; }
+
+a.btn.disabled { pointer-events: none; opacity: .65; }
+
+/* Caixa de upload (dropzone) */
+.upload-box{
+  border: 2px dashed #cfd3da;
+  border-radius: 12px;
+  padding: 24px;
+  background: #fff;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.upload-box:focus{
+  outline: 2px solid rgba(255,140,0,.35);
+  outline-offset: 2px;
+}
+.upload-box.is-dragover{
+  border-color: var(--accent);
+  background: #fff7ee;
+}
+
+/* Grid de miniaturas */
+.thumbs{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+}
+@media (min-width: 768px){
+  .thumbs{ grid-template-columns: repeat(4, 1fr); }
+}
+.thumb{
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f0f2f5;
+  border: 1px solid #e7eaef;
+}
+.thumb img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumb .btn-remove{
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 30px; height: 30px;
+  border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.9);
+  border: 1px solid #d9dfe7;
+}
+.thumb .btn-remove:hover{ background: #fff; }
+
+/* Side menu (padrão) */
+.side-menu-card .list-group-item { border-left: 0; border-right: 0; }
+.side-tabs .side-tab { padding: 0.9rem 1rem; }
+.side-tabs .side-icon { font-size: 1.25rem; color: #3b3b3b; }
+.side-tabs .side-tab:hover { background: #f8f9fb; }
+.side-tabs .side-tab.active {
+  color: var(--accent);
+  background: #fff7ee;
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+.side-tabs .side-tab.active .side-icon { color: var(--accent); }
+
+/* Offcanvas arredondado */
+.offcanvas{
+  border-top-left-radius: .75rem;
+  border-bottom-left-radius: .75rem;
+}
+
+/* Espaço do footer mobile */
+@media (max-width: 767.98px){
+  main{ padding-bottom: 72px; }
+}
+
+/* Remover bordas azuis/linhas do item ativo no side menu */
+.side-tabs .list-group-item{
+  --bs-list-group-active-bg: #fff7ee;
+  --bs-list-group-active-color: var(--accent);
+  --bs-list-group-active-border-color: transparent;
+}
+.side-tabs .list-group-item.active,
+.side-tabs .list-group-item:focus,
+.side-tabs .list-group-item:focus-visible{
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}

@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Conta criada com sucesso!');
     // Redireciona sem usar href (mesma guia)
     setTimeout(() => {
-      window.location.assign('/Dashboard/dashboard.html'); // ajuste o path se necessário
+      window.location.assign('/Localização/localizacao.html'); // ajuste o path se necessário
       // Para evitar voltar ao signup:
       // window.location.replace('/Dashboard/dashboard.html');
     }, 800);
