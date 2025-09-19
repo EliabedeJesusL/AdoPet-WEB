@@ -1,7 +1,6 @@
 // Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 // Configuração
 const firebaseConfig = {
@@ -16,15 +15,13 @@ const firebaseConfig = {
 
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
 // Espera DOM carregar
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("signupForm");
+  const form = document.getElementById("loginForm");
   const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
-  const btnCreate = document.getElementById("btnCreate");
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -33,15 +30,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value.trim();
 
     try {
-      // Cria conta no Firebase
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log("Usuário cadastrado:", userCredential.user);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Usuário logado:", userCredential.user);
 
-      alert("Conta criada com sucesso!");
+      alert("Login realizado com sucesso!");
       window.location.assign("/Dashboard/dashboard.html"); 
     } catch (error) {
-      console.error("Erro:", error.code, error.message);
-      alert("Erro ao criar conta: " + error.message);
+      console.error("Erro no login:", error.code, error.message);
+
+      let message = "Erro ao entrar. ";
+      if (error.code === "auth/user-not-found") message += "Usuário não encontrado.";
+      else if (error.code === "auth/wrong-password") message += "Senha incorreta.";
+      else if (error.code === "auth/invalid-email") message += "Email inválido.";
+      else message += error.message;
+
+      alert(message);
     }
   });
 });

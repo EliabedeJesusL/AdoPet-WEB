@@ -1,0 +1,2 @@
+Separar: JS para dinamicidade(ui.js) do de implementação do banco(firebase-auth)
+Padronizar: Nomes, ids, variáveis..
