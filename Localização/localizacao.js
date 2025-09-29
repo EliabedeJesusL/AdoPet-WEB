@@ -1,3 +1,4 @@
+// js/localizacao.js
 document.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = 'adopet_user_location';
   const NEXT_URL = '/Cadastro Pessoa ou ONG/cadastro_pessoa_ong.html';
@@ -13,11 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Voltar
   btnVoltar?.addEventListener('click', () => {
-    if (history.length > 1) history.back();
-    else window.location.href = '/Cadastro Pessoa ou ONG/cadastro_pessoa_ong.html';
+    // Mantém seu comportamento
+    window.location.href = '/Criar conta/criar_conta.html';
   });
 
-  // Lista de cidades por estado (controlada)
+  // Lista controlada de cidades
   const cidades = {
     'Espírito Santo': ['Vitória', 'Vila Velha', 'Serra', 'Cariacica'],
     'Rio de Janeiro': ['Rio de Janeiro', 'Niterói', 'Petrópolis'],
@@ -25,15 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     'São Paulo': ['São Paulo', 'Campinas', 'Santos'],
   };
 
-  // Mapeia siglas da ViaCEP -> nomes do select
-  const UF_MAP = {
-    ES: 'Espírito Santo',
-    RJ: 'Rio de Janeiro',
-    MG: 'Minas Gerais',
-    SP: 'São Paulo',
-  };
+  // UF (ViaCEP -> nome do select)
+  const UF_MAP = { ES: 'Espírito Santo', RJ: 'Rio de Janeiro', MG: 'Minas Gerais', SP: 'São Paulo' };
 
-  // Hidrata se houver dado salvo
+  // Hidrata do localStorage
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
     if (saved.cep) cep.value = formatCEP(saved.cep);
@@ -44,14 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saved.cidade) cidade.value = saved.cidade;
   } catch {}
 
-  // CEP: máscara e busca ViaCEP
+  // CEP: máscara + ViaCEP
   cep.addEventListener('input', () => {
     cep.value = maskCEP(cep.value);
     validateForm();
     const digits = cep.value.replace(/\D/g, '');
-    if (digits.length === 8) {
-      fetchCEP(digits);
-    }
+    if (digits.length === 8) fetchCEP(digits);
   });
 
   cep.addEventListener('blur', () => {
@@ -66,42 +60,71 @@ document.addEventListener('DOMContentLoaded', () => {
     validateForm();
   });
 
-  // Cidade validação
+  // Cidade
   cidade.addEventListener('change', validateForm);
 
-  // Submit
+  // Submit: só dispara evento para implementação (script.js)
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!validateForm(true)) return;
 
-    // Persistência
     const payload = {
       cep: cep.value.replace(/\D/g, ''),
       estado: estado.value,
       cidade: cidade.value,
       ts: Date.now(),
     };
+
+    // Salva localmente (UX)
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch {}
 
-    // Feedback simples e próxima etapa
+    setLoading(true);
+
+    // Dispara para o script de implementação gravar no DB
+    window.dispatchEvent(new CustomEvent('localizacao:submit', { detail: payload }));
+  });
+
+  // Respostas da implementação
+  window.addEventListener('localizacao:saved', () => {
     showAlert('Localização registrada com sucesso!', 'success');
     setTimeout(() => { window.location.href = NEXT_URL; }, 600);
   });
 
-  // Utils
+  window.addEventListener('localizacao:error', (ev) => {
+    const msg = ev?.detail?.message || 'Erro ao salvar localização.';
+    showAlert(msg, 'danger');
+    setLoading(false);
+
+    const redirectTo = ev?.detail?.redirectTo;
+    if (redirectTo) {
+      setTimeout(() => { window.location.href = redirectTo; }, 900);
+    }
+  });
+
+  // ---------------- utilitários UI ----------------
+  function setLoading(isLoading) {
+    if (!btnRegistrar) return;
+    if (isLoading) {
+      btnRegistrar.dataset.text = btnRegistrar.innerHTML;
+      btnRegistrar.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Salvando...`;
+      btnRegistrar.disabled = true;
+    } else {
+      btnRegistrar.innerHTML = btnRegistrar.dataset.text || 'Registrar';
+      validateForm();
+    }
+  }
 
   function populateCidades(ufNome) {
     cidade.innerHTML = '<option value="">Selecione sua cidade</option>';
     (cidades[ufNome] || []).forEach(c => {
       const opt = document.createElement('option');
-      opt.value = c;
-      opt.textContent = c;
+      opt.value = c; opt.textContent = c;
       cidade.appendChild(opt);
     });
   }
 
   async function fetchCEP(digits) {
-    setFieldValidity(cep, true); // limpa erro anterior
+    setFieldValidity(cep, true);
     try {
       const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
       const data = await res.json();
@@ -112,13 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
         estado.value = ufFull;
         populateCidades(ufFull);
 
-        // Se a cidade retornada estiver na lista, seleciona; senão, adiciona temporariamente
         if (data.localidade) {
           const exists = Array.from(cidade.options).some(o => o.value === data.localidade);
           if (!exists) {
             const opt = document.createElement('option');
-            opt.value = data.localidade;
-            opt.textContent = data.localidade;
+            opt.value = data.localidade; opt.textContent = data.localidade;
             cidade.appendChild(opt);
           }
           cidade.value = data.localidade;
@@ -138,21 +159,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function validateForm(show = false) {
-    // CEP
     const cepDigits = cep.value.replace(/\D/g, '');
     const cepOk = /^\d{8}$/.test(cepDigits);
     setFieldValidity(cep, cepOk, 'Informe um CEP válido (00000-000).');
 
-    // Estado
     const estadoOk = !!estado.value;
     setFieldValidity(estado, estadoOk, 'Selecione o estado.');
 
-    // Cidade
     const cidadeOk = !!cidade.value;
     setFieldValidity(cidade, cidadeOk, 'Selecione a cidade.');
 
     const allOk = cepOk && estadoOk && cidadeOk;
-    btnRegistrar.disabled = !allOk;
+    if (btnRegistrar) btnRegistrar.disabled = !allOk;
 
     if (show && !allOk) {
       const firstInvalid = [cep, estado, cidade].find(el => !el.checkValidity());
@@ -174,18 +192,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showAlert(message, type = 'info') {
-    const container = $('#formAlerts');
-    if (!container) return;
+    const container = document.getElementById('formAlerts');
+    if (!container) return alert(message);
     const el = document.createElement('div');
     el.className = `alert alert-${type} alert-dismissible fade show mt-3`;
     el.role = 'alert';
-    el.innerHTML = `
-      <div>${message}</div>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-    `;
+    el.innerHTML = `<div>${message}</div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>`;
     container.appendChild(el);
   }
 
-  // Primeira validação
+  // valida já ao carregar
   validateForm();
 });

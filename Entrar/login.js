@@ -1,6 +1,7 @@
 // Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 // Configuração Firebase
 const firebaseConfig = {
@@ -10,12 +11,14 @@ const firebaseConfig = {
   storageBucket: "adopet-pi.firebasestorage.app",
   messagingSenderId: "797305766384",
   appId: "1:797305766384:web:46beb3e1346878df149d35",
-  measurementId: "G-0HP9DHD1ZF"
+  measurementId: "G-0HP9DHD1ZF",
+  databaseURL: "https://adopet-pi-default-rtdb.firebaseio.com/" // 👈 garante que está aqui
 };
 
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
 
 // Helpers
 const $ = (sel) => document.querySelector(sel);
@@ -64,7 +67,7 @@ function notify(text) {
   notify._t = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
-// Login Firebase
+// Login Firebase + busca no DB
 form?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -84,7 +87,20 @@ form?.addEventListener('submit', async (e) => {
 
   try {
     const userCredential = await signInWithEmailAndPassword(auth, em, pw);
-    console.log("Usuário logado:", userCredential.user);
+    const user = userCredential.user;
+
+    // 🔥 Buscar dados do usuário no Realtime Database
+    const dbRef = ref(db);
+    const snapshot = await get(child(dbRef, `usuarios/${user.uid}`));
+    if (snapshot.exists()) {
+      const userData = snapshot.val();
+      console.log("Dados do usuário:", userData);
+
+      // Exemplo: guardar no localStorage para usar no Dashboard
+      localStorage.setItem("usuario", JSON.stringify(userData));
+    } else {
+      console.warn("Usuário autenticado, mas sem dados no DB.");
+    }
 
     notify('Login realizado com sucesso!');
     setTimeout(() => {
