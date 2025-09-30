@@ -1,4 +1,4 @@
-// Import Firebase
+// Import Firebase 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
@@ -89,15 +89,19 @@ form?.addEventListener('submit', async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, em, pw);
     const user = userCredential.user;
 
-    // 🔥 Buscar dados do usuário no Realtime Database
+    // 🔥 Salva UID no localStorage (padrão do register.js)
+    localStorage.setItem("uid", user.uid);
+
+    // Buscar dados do usuário no Realtime Database
     const dbRef = ref(db);
     const snapshot = await get(child(dbRef, `usuarios/${user.uid}`));
     if (snapshot.exists()) {
       const userData = snapshot.val();
-      console.log("Dados do usuário:", userData);
 
-      // Exemplo: guardar no localStorage para usar no Dashboard
+      // Opcional: guardar também os dados completos
       localStorage.setItem("usuario", JSON.stringify(userData));
+
+      console.log("Dados do usuário:", userData);
     } else {
       console.warn("Usuário autenticado, mas sem dados no DB.");
     }

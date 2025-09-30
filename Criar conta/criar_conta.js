@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Voltar
   btnBack?.addEventListener('click', () => {
     if (history.length > 1) history.back();
-    else window.location.href = 'index.html';
+    else window.location.href = '/Tela inicial/tela_inicial.html';
   });
 
   // Toggle de senha
