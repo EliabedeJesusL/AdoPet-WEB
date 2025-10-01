@@ -1,10 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { 
-  getDatabase, ref, update 
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
-import { 
-  getStorage, ref as storageRef, uploadBytes, getDownloadURL 
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
+import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBRVmQSKkQ2uyM-wqhHwQTcZVreNRk3u9w",
@@ -21,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const storage = getStorage(app);
 
-document.getElementById("cadastroFisicoForm").addEventListener("submit", async (e) => {
+document.getElementById("formCadastro").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const uid = localStorage.getItem("uid");
@@ -36,31 +32,29 @@ document.getElementById("cadastroFisicoForm").addEventListener("submit", async (
   const nascimento = document.getElementById("nascimento").value;
   const sexo = document.getElementById("sexo").value;
   const telefone = document.getElementById("telefone").value;
-  const fotoFile = document.getElementById("foto").files[0]; // input type="file"
+  const fotoFile = document.getElementById("uploadFoto").files[0];
 
   try {
     let fotoUrl = "";
 
-    // Se o usuário enviou uma foto, faz upload para o Storage
     if (fotoFile) {
       const fotoRef = storageRef(storage, `usuarios/${uid}/avatar.jpg`);
       await uploadBytes(fotoRef, fotoFile);
       fotoUrl = await getDownloadURL(fotoRef);
     }
 
-    // Salva os dados no Realtime Database
     await update(ref(db, `usuarios/${uid}/cadastro/PessoaFisica`), {
-      nome: nome,
-      cpf: cpf,
-      nascimento: nascimento,
-      sexo: sexo,
-      telefone: telefone,
-      fotoUrl: fotoUrl || "", // só salva se tiver enviado
+      nome,
+      cpf,
+      nascimento,
+      sexo,
+      telefone,
+      fotoUrl: fotoUrl || "",
       updatedAt: Date.now()
     });
 
     alert("Cadastro de Pessoa Física salvo com sucesso!");
-    window.location.href = "dashboard.html"; // redireciona depois de salvar
+    window.location.href = "dashboard.html";
 
   } catch (error) {
     console.error("Erro ao salvar cadastro:", error);
