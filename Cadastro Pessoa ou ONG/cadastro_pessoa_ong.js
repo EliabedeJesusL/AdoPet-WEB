@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Voltar
   btnVoltar?.addEventListener('click', () => {
     if (history.length > 1) history.back();
-    else window.location.href = '/Conta/conta.html';
+    else window.location.href = 'Localização/localizacao.html';
   });
 
   // Redireciona para o cadastro específico
