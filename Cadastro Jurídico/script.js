@@ -18,26 +18,15 @@ const storage = getStorage(app);
 
 const form = document.getElementById("formCadastroJuridico");
 const uploadLogo = document.getElementById("uploadLogo");
-const logoImg = document.getElementById("logoImg");
-const logoPlaceholder = document.getElementById("logoPlaceholder");
-
 let logoFile = null;
 
-// Pré-visualização da logo
-uploadLogo.addEventListener("change", (e) => {
-  logoFile = e.target.files[0];
-  if (logoFile) {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      logoImg.src = ev.target.result;
-      logoImg.classList.remove("d-none");
-      logoPlaceholder.classList.add("d-none");
-    };
-    reader.readAsDataURL(logoFile);
-  }
+// Captura arquivo selecionado
+uploadLogo?.addEventListener("change", (e) => {
+  logoFile = e.target.files[0] || null;
 });
 
-form.addEventListener("submit", async (e) => {
+// Envio do cadastro
+form?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const uid = localStorage.getItem("uid");
@@ -46,7 +35,7 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Pega os dados do form
+  // Dados do form
   const dados = {
     instituicao: form.instituicao.value.trim(),
     cnpj: form.cnpj.value.trim(),
@@ -62,14 +51,14 @@ form.addEventListener("submit", async (e) => {
   try {
     let logoUrl = "";
     if (logoFile) {
-      // Faz upload da logo
+      // Upload da logo no Storage
       const storagePath = `logos/${uid}/${logoFile.name}`;
       const fileRef = storageRef(storage, storagePath);
       await uploadBytes(fileRef, logoFile);
       logoUrl = await getDownloadURL(fileRef);
     }
 
-    // Salva no banco
+    // Atualiza no Realtime Database
     await update(ref(db, `usuarios/${uid}/cadastro`), {
       PessoaJuridica: {
         ...dados,
@@ -78,7 +67,7 @@ form.addEventListener("submit", async (e) => {
     });
 
     alert("Cadastro realizado com sucesso!");
-    window.location.href = "home.html"; // redireciona se quiser
+    window.location.href = "/Dashboard/dashboard.html";
 
   } catch (error) {
     console.error("Erro ao salvar cadastro:", error);

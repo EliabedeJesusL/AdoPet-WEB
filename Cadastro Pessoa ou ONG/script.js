@@ -26,37 +26,34 @@ async function salvarTipoCadastro(tipo, redirectPage) {
   }
 
   try {
-    // Estrutura inicial do cadastro
     const dadosIniciais = tipo === "PessoaFisica" ? {
-    nome: "",
-    cpf: "",
-    nascimento: "",
-    sexo: "",
-    telefone: ""
+      nome: "",
+      cpf: "",
+      nascimento: "",
+      sexo: "",
+      telefone: ""
     } : {
-    instituicao: "",
-    cnpj: "",
-    aceitaDoacoes: "",
-    responsavel: "",
-    email: "",
-    site: "",
-    telefone: "",
-    patrocinios: "",
-    necessidades: ""
+      instituicao: "",
+      cnpj: "",
+      aceitaDoacoes: "",
+      responsavel: "",
+      email: "",
+      site: "",
+      telefone: "",
+      patrocinios: "",
+      necessidades: ""
     };
-
 
     await update(ref(db, `usuarios/${uid}/cadastro`), {
       [tipo]: dadosIniciais
     });
 
     window.location.href = redirectPage;
-
   } catch (error) {
     console.error("Erro ao salvar tipo de cadastro:", error);
     alert("Erro ao salvar escolha.");
   }
 }
 
-btnFisica.addEventListener("click", () => salvarTipoCadastro("PessoaFisica", "cadastro_fisico.html"));
-btnJuridica.addEventListener("click", () => salvarTipoCadastro("PessoaJuridica", "cadastro_ong.html"));
+btnFisica.addEventListener("click", () => salvarTipoCadastro("PessoaFisica", "/Cadastro Físico/cadastro_fisico.html"));
+btnJuridica.addEventListener("click", () => salvarTipoCadastro("PessoaJuridica", "/Cadastro Jurídico/cadastro_juridico.html"));
