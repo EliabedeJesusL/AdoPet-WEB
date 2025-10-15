@@ -1,6 +1,6 @@
 (() => {
   const STORAGE_KEY = 'adopet_cadastro_animal_step1';
-  const NEXT_URL = '/Cadastrar/fotos.html'; // ajuste o caminho da próxima etapa
+  const NEXT_URL = '/Upload Dados do Animal/upload_dados_animal.html'; // ajuste o caminho da próxima etapa
 
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));

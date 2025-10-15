@@ -1,73 +1,88 @@
-import { db, storage } from "JS/firebase-config.js"
-import { ref, push, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBRVmQSKkQ2uyM-wqhHwQTcZVreNRk3u9w",
-    authDomain: "adopet-pi.firebaseapp.com",
-    projectId: "adopet-pi",
-    storageBucket: "adopet-pi.appspot.com",
-    messagingSenderId: "797305766384",
-    appId: "1:797305766384:web:46beb3e1346878df149d35",
-    databaseURL: "https://adopet-pi-default-rtdb.firebaseio.com/"
-  };
-  
-export const app = initializeApp(firebaseConfig);
-export const db = getDatabase(app);
-export const storage = getStorage(app);
+  apiKey: "AIzaSyBRVmQSKkQ2uyM-wqhHwQTcZVreNRk3u9w",
+  authDomain: "adopet-pi.firebaseapp.com",
+  projectId: "adopet-pi",
+  storageBucket: "adopet-pi.firebasestorage.app",
+  messagingSenderId: "797305766384",
+  appId: "1:797305766384:web:46beb3e1346878df149d35",
+  measurementId: "G-0HP9DHD1ZF",
+  databaseURL: "https://adopet-pi-default-rtdb.firebaseio.com/"
+};
 
-const STORAGE_KEY = 'adopet_cadastro_animal_step1';
-const NEXT_URL = '/Upload Dados do Animal/upload_dados_animal.html';
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-function getPayloadFromEventOrStorage(ev) {
-    if (ev?.detail && ev.detail.nome) return ev.detail;
-    try {
-      const s = localStorage.getItem(STORAGE_KEY);
-      if (s) {
-        const parsed = JSON.parse(s);
-        if (parsed && parsed.nome) return parsed;
-      }
-    } catch (err) {
-      console.warn('Erro lendo localStorage:', err);
-    }
-    return null;
+// ===============================
+// CONFIGURAÇÕES
+// ===============================
+const NEXT_URL = "/Upload Dados do Animal/upload_dados_animal.html";
+
+// ===============================
+// FUNÇÃO PRINCIPAL
+// ===============================
+async function salvarAnimal(e) {
+  e.preventDefault(); // evita que o <a> siga o link imediatamente
+
+  // 1️⃣ Pegando valores do formulário
+  const especie = document.getElementById("especie").value.trim();
+  const raca = document.getElementById("raca").value.trim();
+  const idade = document.getElementById("idade").value.trim();
+  const nome = document.getElementById("nome").value.trim();
+  const descricao = document.getElementById("descricao").value.trim();
+  const historico = document.getElementById("historico").value.trim();
+
+  // 2️⃣ Validação básica
+  if (!especie || !nome) {
+    alert("Por favor, preencha pelo menos o nome e a espécie do animal.");
+    return;
   }
 
-  window.addEventListener('animal:submit', async (ev) => {
-    const payload = getPayloadFromEventOrStorage(ev);
-    if (!payload || !payload.nome || !payload.especie) {
-      alert('Dados incompletos. Preencha o formulário antes de avançar.');
-      return;
-    }
-  
-    try {
-      const uid = localStorage.getItem('uid') || ''; // pode estar vazio se usuário não logado
-  
-      // caminho: animal_Cadastrado -> push()
-      const animaisRef = ref(db, 'animal_Cadastrado');
-      const newAnimalRef = push(animaisRef); // gera uma chave única
-  
-      const dataToSave = {
-        especie: payload.especie || '',
-        raca: payload.raca || '',
-        idade: payload.idade || '',
-        nome: payload.nome || '',
-        descricao: payload.descricao || '',
-        historico: payload.historico || '',
-        ownerUid: uid || '',
-        createdAt: Date.now()
-      };
-  
-      await set(newAnimalRef, dataToSave);
-  
-      console.log('Animal salvo com sucesso em:', newAnimalRef.key);
-      localStorage.removeItem(STORAGE_KEY);
-  
-      // redireciona
-      window.location.href = NEXT_URL;
-  
-    } catch (error) {
-      console.error('Erro ao salvar animal no Realtime DB:', error);
-      alert('Erro ao salvar os dados. Veja o console para detalhes.');
-    }
-  });
+  try {
+    // 3️⃣ Cria referência no banco
+    const animaisRef = ref(db, "animal_Cadastrado");
+    const novoAnimalRef = push(animaisRef);
+
+    // 4️⃣ Dados a serem salvos
+    const uid = localStorage.getItem("uid") || "sem-usuario";
+    // const disponivel = true; // novo animal está disponível por padrão
+    const dadosAnimal = {
+      nome,
+      especie,
+      raca,
+      idade,
+      descricao,
+      historico,
+      donoUid: uid,
+      criadoEm: new Date().toISOString(),
+      disponivel: true
+    };
+
+    // 5️⃣ Envia para o Firebase
+    await set(novoAnimalRef, dadosAnimal);
+
+    console.log("✅ Animal cadastrado com sucesso:", dadosAnimal);
+    alert("Animal cadastrado com sucesso!");
+
+    // 6️⃣ Redireciona somente se o envio der certo
+    window.location.href = NEXT_URL;
+
+  } catch (error) {
+    console.error("❌ Erro ao salvar animal:", error);
+    alert("Erro ao salvar o animal. Veja o console para mais detalhes.");
+  }
+}
+
+// ===============================
+// EVENTO DO BOTÃO "Avançar"
+// ===============================
+const btnAvancar = document.getElementById("btnAvancar");
+
+if (btnAvancar) {
+  // impedimos o comportamento padrão do link e chamamos a função
+  btnAvancar.addEventListener("click", salvarAnimal);
+} else {
+  console.warn("⚠️ Botão Avançar não encontrado!");
+}
