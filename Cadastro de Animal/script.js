@@ -60,6 +60,9 @@ async function salvarAnimal(e) {
       disponivel: true
     };
 
+    localStorage.setItem("ultimoAnimalId", docRef.id);
+    window.location.href = "/Upload Dados do Animal/upload_dados_animal.html";
+
     // 5️⃣ Envia para o Firebase
     await set(novoAnimalRef, dadosAnimal);
 
