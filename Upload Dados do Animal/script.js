@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBRVmQSKkQ2uyM-wqhHwQTcZVreNRk3u9w",
@@ -12,14 +13,17 @@ const firebaseConfig = {
   databaseURL: "https://adopet-pi-default-rtdb.firebaseio.com/"
 };
 
+// Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
+// Elementos do formulário
 const form = document.getElementById("formUpload");
 const fotoAnimal = document.getElementById("inputAnimal");
 const fotoCartao = document.getElementById("inputVacina");
 
+// Recupera o ID do último animal cadastrado
 const animalId = localStorage.getItem("ultimoAnimalId");
 
 // Função para converter imagem em Base64
@@ -32,13 +36,21 @@ function fileToBase64(file) {
   });
 }
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    alert("Você precisa estar logado para continuar.");
-    window.location.href = "/Login/login.html";
-    return;
-  }
+// Verifica se o usuário está logado
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("formUpload");
+  const fotoAnimal = document.getElementById("inputAnimal");
+  const fotoCartao = document.getElementById("inputVacina");
 
+   if (!form) return;
+
+  // if (!user) {
+  //   alert("Você precisa estar logado para continuar.");
+  //   window.location.href = "/Login/login.html";
+  //   return;
+  // }
+
+  // Envio das fotos
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -49,22 +61,28 @@ onAuthStateChanged(auth, (user) => {
 
     const fileAnimal = fotoAnimal.files[0];
     const fileCartao = fotoCartao.files[0];
-    if (!fileAnimal || !fileCartao) {
-      alert("Envie as duas fotos!");
+
+    if (!fileAnimal && !fileCartao) {
+      alert("Envie pelo menos uma foto!");
       return;
     }
 
     try {
-      // 🔹 Converte as imagens para Base64
-      const base64Animal = await fileToBase64(fileAnimal);
-      const base64Cartao = await fileToBase64(fileCartao);
+      const updates = {};
 
-      // 🔹 Atualiza o nó do animal no Realtime Database
-      const animalRef = ref(db, `animal_Cadastrado/${animalId}`);
-      await update(animalRef, {
-        fotoAnimal: base64Animal,
-        fotoCartao: base64Cartao,
-      });
+      if (fileAnimal) {
+        const base64Animal = await fileToBase64(fileAnimal);
+        updates.fotoAnimal = base64Animal;
+      }
+
+      if (fileCartao) {
+        const base64Cartao = await fileToBase64(fileCartao);
+        updates.fotoCartao = base64Cartao;
+      }
+
+      // Atualiza o nó do animal
+      const animalRef = ref(db, `animais_cadastrados/${user.uid}/${animalId}`);
+      await update(animalRef, updates);
 
       alert("✅ Cadastro concluído com sucesso!");
       localStorage.removeItem("ultimoAnimalId");
