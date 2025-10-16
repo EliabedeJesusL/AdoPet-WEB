@@ -43,7 +43,7 @@ async function salvarAnimal(e) {
   try {
     // 3️⃣ Cria referência no banco
     const animaisRef = ref(db, "animal_Cadastrado");
-    const novoAnimalRef = push(animaisRef);
+    const novoAnimalRef = push(animaisRef); // gera ID único automaticamente
 
     // 4️⃣ Dados a serem salvos
     const uid = localStorage.getItem("uid") || "sem-usuario";
@@ -60,9 +60,7 @@ async function salvarAnimal(e) {
       disponivel: true
     };
 
-    localStorage.setItem("ultimoAnimalId", docRef.id);
-    window.location.href = "/Upload Dados do Animal/upload_dados_animal.html";
-
+    localStorage.setItem("ultimoAnimalId", novoAnimalRef.key);
     // 5️⃣ Envia para o Firebase
     await set(novoAnimalRef, dadosAnimal);
 
@@ -70,7 +68,7 @@ async function salvarAnimal(e) {
     alert("Animal cadastrado com sucesso!");
 
     // 6️⃣ Redireciona somente se o envio der certo
-    window.location.href = NEXT_URL;
+    window.location.href = "/Upload Dados do Animal/upload_dados_animal.html";
 
   } catch (error) {
     console.error("❌ Erro ao salvar animal:", error);

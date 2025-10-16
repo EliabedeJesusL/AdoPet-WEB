@@ -56,17 +56,18 @@
       showAlert('Adicione pelo menos uma foto do animal para continuar.', 'warning');
       return;
     }
-
+  
     try {
       sessionStorage.setItem('adopet_upload_counts', JSON.stringify({
         animal: animal.count(),
         vacina: vacina.count()
       }));
     } catch {}
-
-    // Se quiser enviar via fetch antes de navegar, você pode interceptar aqui
-    // e somente redirecionar após sucesso.
+  
+    // ✅ NÃO usar preventDefault aqui, deixar o submit acontecer normalmente.
+    // O outro script (de upload Firebase) vai capturar o evento "submit".
   });
+  
 
   // Helpers
 
