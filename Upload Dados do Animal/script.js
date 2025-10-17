@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getDatabase, ref, update, set, get, child } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -18,14 +18,6 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// Elementos do formulário
-const form = document.getElementById("formUpload");
-const fotoAnimal = document.getElementById("inputAnimal");
-const fotoCartao = document.getElementById("inputVacina");
-
-// Recupera o ID do último animal cadastrado
-const animalId = localStorage.getItem("ultimoAnimalId");
-
 // Função para converter imagem em Base64
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -36,60 +28,75 @@ function fileToBase64(file) {
   });
 }
 
-// Verifica se o usuário está logado
+// 🕒 Aguarda o DOM carregar
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("formUpload");
   const fotoAnimal = document.getElementById("inputAnimal");
   const fotoCartao = document.getElementById("inputVacina");
 
-   if (!form) return;
+  // Se o formulário não existir, interrompe
+  if (!form || !fotoAnimal) {
+    console.error("❌ Formulário ou campo de foto não encontrado!");
+    return;
+  }
 
-  // if (!user) {
-  //   alert("Você precisa estar logado para continuar.");
-  //   window.location.href = "/Login/login.html";
-  //   return;
-  // }
+  const animalId = localStorage.getItem("ultimoAnimalId");
 
-  // Envio das fotos
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    if (!animalId) {
-      alert("Nenhum animal encontrado. Volte e cadastre o animal primeiro.");
+  // 🔐 Garante que o usuário está logado antes de permitir o upload
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      alert("Você precisa estar logado para continuar.");
+      window.location.href = "/Login/login.html";
       return;
     }
 
-    const fileAnimal = fotoAnimal.files[0];
-    const fileCartao = fotoCartao.files[0];
+    // Envio das fotos
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-    if (!fileAnimal && !fileCartao) {
-      alert("Envie pelo menos uma foto!");
-      return;
-    }
+      if (!animalId) {
+        alert("Nenhum animal encontrado. Volte e cadastre o animal primeiro.");
+        return;
+      }
 
-    try {
-      const updates = {};
+      const fileAnimal = fotoAnimal?.files?.[0];
+      const fileCartao = fotoCartao?.files?.[0] || null;
 
-      if (fileAnimal) {
+      // Só a foto do animal é obrigatória
+      if (!fileAnimal) {
+        alert("Envie pelo menos uma foto do animal!");
+        return;
+      }
+
+      try {
+        // Salva obrigatória
         const base64Animal = await fileToBase64(fileAnimal);
-        updates.fotoAnimal = base64Animal;
+        const updates = { fotoAnimal: base64Animal };
+
+        if (fileCartao) {
+          const base64Cartao = await fileToBase64(fileCartao);
+          updates.fotoCartao = base64Cartao;
+        }
+
+        // Atualiza o nó do animal no Realtime Database
+        const path = `animais_cadastrados/${user.uid}/${animalId}`;
+        const animalRef = ref(db, path);
+
+        // ✅ Checa se o animal já existe, senão cria
+        const snapshot = await get(child(ref(db), path));
+        if (snapshot.exists()) {
+          await update(animalRef, updates);
+        } else {
+          await set(animalRef, updates);
+        }
+
+        alert("✅ Cadastro concluído com sucesso!");
+        localStorage.removeItem("ultimoAnimalId");
+        window.location.href = "/Dashboard/dashboard.html";
+      } catch (err) {
+        console.error("❌ Erro ao enviar fotos:", err);
+        alert("Erro ao salvar fotos. Veja o console para mais detalhes.");
       }
-
-      if (fileCartao) {
-        const base64Cartao = await fileToBase64(fileCartao);
-        updates.fotoCartao = base64Cartao;
-      }
-
-      // Atualiza o nó do animal
-      const animalRef = ref(db, `animais_cadastrados/${user.uid}/${animalId}`);
-      await update(animalRef, updates);
-
-      alert("✅ Cadastro concluído com sucesso!");
-      localStorage.removeItem("ultimoAnimalId");
-      window.location.href = "/Dashboard/dashboard.html";
-    } catch (err) {
-      console.error("❌ Erro ao enviar fotos:", err);
-      alert("Erro ao salvar fotos. Veja o console para mais detalhes.");
-    }
+    });
   });
 });
