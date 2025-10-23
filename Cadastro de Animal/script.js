@@ -57,7 +57,8 @@ async function salvarAnimal(e) {
       historico,
       donoUid: uid,
       criadoEm: new Date().toISOString(),
-      disponivel: true
+      disponivel: true,
+      fotoUrl: null
     };
 
     localStorage.setItem("ultimoAnimalId", novoAnimalRef.key);
