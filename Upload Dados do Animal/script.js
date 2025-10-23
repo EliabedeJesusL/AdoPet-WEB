@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// Função para converter imagem em Base64
+// Converte arquivo em Base64 (DataURL)
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -28,21 +28,16 @@ function fileToBase64(file) {
   });
 }
 
-// 🕒 Aguarda o DOM carregar
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("formUpload");
-  const fotoAnimal = document.getElementById("inputAnimal");
-  const fotoCartao = document.getElementById("inputVacina");
 
-  // Se o formulário não existir, interrompe
-  if (!form || !fotoAnimal) {
-    console.error("❌ Formulário ou campo de foto não encontrado!");
+  if (!form) {
+    console.error("❌ Formulário não encontrado (#formUpload).");
     return;
   }
 
   const animalId = localStorage.getItem("ultimoAnimalId");
 
-  // 🔐 Garante que o usuário está logado antes de permitir o upload
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       alert("Você precisa estar logado para continuar.");
@@ -50,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Envio das fotos
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -59,30 +53,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const fileAnimal = fotoAnimal?.files?.[0];
-      const fileCartao = fotoCartao?.files?.[0] || null;
-
-      // Só a foto do animal é obrigatória
-      if (!fileAnimal) {
-        alert("Envie pelo menos uma foto do animal!");
-        return;
-      }
-
       try {
-        // Salva obrigatória
-        const base64Animal = await fileToBase64(fileAnimal);
+        // Lê arquivos selecionados pela UI (expostos globalmente)
+        const uploads = window.__adopetUploads || { animal: [], vacina: [] };
+        const animalFiles = Array.isArray(uploads.animal) ? uploads.animal : [];
+        const vacinaFiles = Array.isArray(uploads.vacina) ? uploads.vacina : [];
+
+        if (animalFiles.length === 0) {
+          alert("Envie pelo menos uma foto do animal!");
+          return;
+        }
+
+        // Converte o primeiro arquivo de cada grupo (mínimo para funcionar)
+        const base64Animal = await fileToBase64(animalFiles[0].file);
         const updates = { fotoAnimal: base64Animal };
 
-        if (fileCartao) {
-          const base64Cartao = await fileToBase64(fileCartao);
+        if (vacinaFiles.length > 0) {
+          const base64Cartao = await fileToBase64(vacinaFiles[0].file);
           updates.fotoCartao = base64Cartao;
         }
 
-        // Atualiza o nó do animal no Realtime Database
+        // Caminho do nó do animal
         const path = `animais_cadastrados/${user.uid}/${animalId}`;
         const animalRef = ref(db, path);
 
-        // ✅ Checa se o animal já existe, senão cria
+        // Checa se já existe; atualiza ou cria
         const snapshot = await get(child(ref(db), path));
         if (snapshot.exists()) {
           await update(animalRef, updates);

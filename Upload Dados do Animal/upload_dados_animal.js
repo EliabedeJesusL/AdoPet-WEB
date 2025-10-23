@@ -5,6 +5,9 @@
 
   const $ = (s, el = document) => el.querySelector(s);
 
+  // Exposição controlada dos arquivos para o módulo de banco
+  window.__adopetUploads = window.__adopetUploads || { animal: [], vacina: [] };
+
   // Voltar (mobile)
   $('#btnVoltar')?.addEventListener('click', () => {
     if (document.referrer) history.back();
@@ -26,7 +29,8 @@
     btnShot: '#btnShotAnimal',
     preview: '#previewAnimal',
     counter: '#countAnimal',
-    storageKey: 'adopet_upload_animal'
+    storageKey: 'adopet_upload_animal',
+    globalKey: 'animal' // <- adicionamos essa chave
   });
 
   const vacina = setupUploadGroup({
@@ -36,7 +40,8 @@
     btnShot: '#btnShotVacina',
     preview: '#previewVacina',
     counter: '#countVacina',
-    storageKey: 'adopet_upload_vacina'
+    storageKey: 'adopet_upload_vacina',
+    globalKey: 'vacina' // <- adicionamos essa chave
   });
 
   // Habilita o Salvar somente quando tiver ao menos 1 foto do animal
@@ -56,18 +61,16 @@
       showAlert('Adicione pelo menos uma foto do animal para continuar.', 'warning');
       return;
     }
-  
+
     try {
       sessionStorage.setItem('adopet_upload_counts', JSON.stringify({
         animal: animal.count(),
         vacina: vacina.count()
       }));
     } catch {}
-  
-    // ✅ NÃO usar preventDefault aqui, deixar o submit acontecer normalmente.
-    // O outro script (de upload Firebase) vai capturar o evento "submit".
+
+    // deixa o submit acontecer normalmente (o módulo de banco trata)
   });
-  
 
   // Helpers
 
@@ -78,6 +81,7 @@
     const shot = $(cfg.btnShot);
     const preview = $(cfg.preview);
     const counter = $(cfg.counter);
+    const globalKey = cfg.globalKey; // 'animal' | 'vacina'
 
     /** @type {{id:string, file:File, url:string}[]} */
     let state = [];
@@ -103,9 +107,15 @@
       if (!btn) return;
       const thumb = btn.closest('.thumb');
       const id = thumb?.dataset?.id;
+
       const idx = state.findIndex(x => x.id === id);
       if (idx >= 0) {
         URL.revokeObjectURL(state[idx].url);
+        // remove também do global
+        const gArr = window.__adopetUploads[globalKey];
+        const gIdx = gArr.findIndex(x => x.id === id);
+        if (gIdx >= 0) gArr.splice(gIdx, 1);
+
         state.splice(idx, 1);
         thumb.remove();
         persist();
@@ -118,7 +128,9 @@
     input?.addEventListener('change', () => {
       if (!input.files?.length) return;
       handleFiles(input.files);
-      input.value = ''; // permite selecionar o mesmo arquivo novamente
+      // Mantemos esse reset para permitir selecionar o mesmo arquivo de novo;
+      // os arquivos já ficam guardados no "state" e no global __adopetUploads.
+      input.value = '';
     });
 
     // Botões
@@ -137,7 +149,7 @@
     ['dragenter','dragover'].forEach(evt =>
       box?.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); box.classList.add('is-dragover'); })
     );
-    ['dragleave','drop'].forEach(evt =>
+    ['dragleave','drop'].forEach (evt =>
       box?.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); box.classList.remove('is-dragover'); })
     );
     box?.addEventListener('drop', (e) => {
@@ -171,6 +183,8 @@
         const id = crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
         const item = { id, file, url };
         state.push(item);
+        // adiciona também no global, para o módulo do banco ler no submit
+        window.__adopetUploads[globalKey].push({ id, file });
         addThumb(item);
       });
 
