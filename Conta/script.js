@@ -1,78 +1,90 @@
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { app } from "./firebase-config.js"; // seu arquivo de inicialização
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyBRVmQSKkQ2uyM-wqhHwQTcZVreNRk3u9w",
+  authDomain: "adopet-pi.firebaseapp.com",
+  projectId: "adopet-pi",
+  storageBucket: "adopet-pi.firebasestorage.app",
+  messagingSenderId: "797305766384",
+  appId: "1:797305766384:web:46beb3e1346878df149d35",
+  measurementId: "G-0HP9DHD1ZF",
+  databaseURL: "https://adopet-pi-default-rtdb.firebaseio.com/"
+};
+
+// Firebase
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+// Elementos
+const btnEndereco = document.getElementById("btnEndereco");
+const conteudoEndereco = document.getElementById("conteudoEndereco");
+const cepEl = document.getElementById("cepUser");
+const cidadeEl = document.getElementById("cidadeUser");
+const estadoEl = document.getElementById("estadoUser");
+
+// Guarda usuário atual
+let currentUser = null;
+
+// Habilita o botão quando soubermos o usuário
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    carregarDadosUsuario(user.uid);
+  currentUser = user || null;
+  // se quiser redirecionar sem login, descomente:
+  // if (!currentUser) window.location.href = "/Login/login.html";
+});
+
+// Click no "Meu Endereço"
+btnEndereco?.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (!conteudoEndereco) return;
+
+  const isHidden = conteudoEndereco.classList.contains("conteudo-oculto");
+
+  if (isHidden) {
+    // Mostrar e carregar
+    // Mostra estado de carregamento nos spans
+    if (cepEl) cepEl.textContent = "Carregando...";
+    if (cidadeEl) cidadeEl.textContent = "Carregando...";
+    if (estadoEl) estadoEl.textContent = "Carregando...";
+
+    await carregarEndereco();
+    conteudoEndereco.classList.remove("conteudo-oculto");
   } else {
-    window.location.href = "login.html"; // redireciona se não estiver logado
+    // Oculta
+    conteudoEndereco.classList.add("conteudo-oculto");
   }
 });
 
-async function carregarMeusAnimais(uid) {
-  const animaisRef = ref(db, "animais");
-  const snapshot = await get(animaisRef);
-  const container = document.getElementById("meusAnimaisContainer");
-
-  if (snapshot.exists()) {
-    container.innerHTML = "";
-    snapshot.forEach((child) => {
-      const animal = child.val();
-      if (animal.donoUID === uid) {
-        container.innerHTML += `
-          <div class="animal-card">
-            <img src="${animal.fotoURL}" alt="${animal.nome}" />
-            <h4>${animal.nome}</h4>
-            <p>${animal.especie} - ${animal.idade}</p>
-          </div>
-        `;
-      }
-    });
-  } else {
-    container.innerHTML = "<p>Nenhum animal cadastrado ainda.</p>";
+async function carregarEndereco() {
+  if (!currentUser) {
+    if (cepEl) cepEl.textContent = "—";
+    if (cidadeEl) cidadeEl.textContent = "—";
+    if (estadoEl) estadoEl.textContent = "—";
+    console.warn("Usuário não autenticado.");
+    return;
   }
-}
 
-async function carregarMinhasInformacoes(uid) {
-  const userRef = ref(db, "usuarios/" + uid);
-  const snapshot = await get(userRef);
-  const infoContainer = document.getElementById("minhasInformacoesContainer");
+  try {
+    const refUser = ref(db, `usuarios/${currentUser.uid}/localizacao`);
+    const snapshot = await get(refUser);
 
-  if (snapshot.exists()) {
-    const user = snapshot.val();
-    infoContainer.innerHTML = `
-      <p><strong>Nome:</strong> ${user.nome}</p>
-      <p><strong>Email:</strong> ${user.email}</p>
-      <p><strong>Telefone:</strong> ${user.telefone || "Não informado"}</p>
-      <p><strong>Bio:</strong> ${user.bio || "Sem descrição"}</p>
-    `;
+    if (snapshot.exists()) {
+      const dados = snapshot.val();
+      if (cepEl) cepEl.textContent = dados.cep || "Não informado";
+      if (cidadeEl) cidadeEl.textContent = dados.cidade || "Não informado";
+      if (estadoEl) estadoEl.textContent = dados.estado || "Não informado";
+    } else {
+      if (cepEl) cepEl.textContent = "—";
+      if (cidadeEl) cidadeEl.textContent = "—";
+      if (estadoEl) estadoEl.textContent = "—";
+      console.info("Nenhum endereço cadastrado.");
+    }
+  } catch (err) {
+    console.error("Erro ao carregar endereço:", err);
+    if (cepEl) cepEl.textContent = "Erro";
+    if (cidadeEl) cidadeEl.textContent = "Erro";
+    if (estadoEl) estadoEl.textContent = "Erro";
   }
-}
-
-async function carregarMeuEndereco(uid) {
-  const enderecoRef = ref(db, "usuarios/" + uid + "/localizacao");
-  const snapshot = await get(enderecoRef);
-  const endContainer = document.getElementById("meuEnderecoContainer");
-
-  if (snapshot.exists()) {
-    const local = snapshot.val();
-    endContainer.innerHTML = `
-      <p><strong>CEP:</strong> ${local.cep}</p>
-      <p><strong>Cidade:</strong> ${local.cidade}</p>
-      <p><strong>Estado:</strong> ${local.estado}</p>
-    `;
-  } else {
-    endContainer.innerHTML = "<p>Endereço não cadastrado.</p>";
-  }
-}
-
-async function carregarDadosUsuario(uid) {
-  carregarMinhasInformacoes(uid);
-  carregarMeuEndereco(uid);
-  carregarMeusAnimais(uid);
-//   carregarMinhasDoacoes(uid);
 }

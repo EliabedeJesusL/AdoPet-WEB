@@ -70,6 +70,22 @@ body {
   border-bottom-left-radius: .5rem; border-bottom-right-radius: .5rem;
 }
 
+/* Conteúdo oculto */
+
+.conteudo-oculto {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.endereco-box p {
+  margin-bottom: 6px;
+}
+
 /* Botão sair (mesmo estilo do Feed) */
 #btnSair, #btnSairMobile {
   background: #f1f2f4;
