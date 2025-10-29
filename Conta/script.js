@@ -38,6 +38,10 @@ const cepEl = document.getElementById("cepUser");
 const cidadeEl = document.getElementById("cidadeUser");
 const estadoEl = document.getElementById("estadoUser");
 
+// Toggle do "Sobre" no padrão das outras seções
+const btnSobre = document.getElementById("btnSobre");
+const conteudoSobre = document.getElementById("conteudoSobre");
+
 // Guarda usuário e garante readiness do Auth
 let currentUser = null;
 let authResolved = false;
@@ -277,3 +281,17 @@ async function carregarEndereco() {
     if (cepEl) cepEl.textContent = "Erro"; if (cidadeEl) cidadeEl.textContent = "Erro"; if (estadoEl) estadoEl.textContent = "Erro";
   }
 }
+
+//SOBRE
+
+btnSobre?.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (!conteudoSobre) return;
+
+  const isHidden = conteudoSobre.classList.contains("conteudo-oculto");
+  if (isHidden) {
+    conteudoSobre.classList.remove("conteudo-oculto");
+  } else {
+    conteudoSobre.classList.add("conteudo-oculto");
+  }
+});
