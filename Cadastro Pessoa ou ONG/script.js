@@ -41,7 +41,8 @@ async function salvarTipoCadastro(tipo, redirectPage) {
       site: "",
       telefone: "",
       patrocinios: "",
-      necessidades: ""
+      necessidades: "",
+      fotoUrl: ""
     };
 
     await update(ref(db, `usuarios/${uid}/cadastro`), {

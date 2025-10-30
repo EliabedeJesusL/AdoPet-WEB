@@ -1,4 +1,4 @@
-// script.js (module)
+// /Cadastro Físico/script.js (module)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
@@ -26,7 +26,7 @@ function fileToBase64(file) {
   });
 }
 
-// Escuta o evento disparado pela UI quando o formulário é válido
+// Disparado pela UI quando o formulário é válido
 document.addEventListener('cadastro:submit', async () => {
   const btnSubmit = document.getElementById('btnSubmit');
   if (btnSubmit) {
@@ -40,7 +40,7 @@ document.addEventListener('cadastro:submit', async () => {
     return;
   }
 
-  // Lê os campos (o UI já validou)
+  // Campos do formulário
   const nome = document.getElementById("nome")?.value?.trim() || "";
   const cpf = document.getElementById("cpf")?.value || "";
   const nascimento = document.getElementById("nascimento")?.value || "";
@@ -54,35 +54,24 @@ document.addEventListener('cadastro:submit', async () => {
       fotoBase64 = await fileToBase64(fotoFile);
     }
 
-    // Dados do cadastro (PF)
+    // Dados PF
     const dataPF = {
       nome,
       cpf,
       nascimento,
       sexo,
       telefone,
-      // salva somente em fotoUrl (nada de "avatar")
-      fotoUrl: fotoBase64 || "",
       updatedAt: Date.now()
     };
+    if (fotoBase64) dataPF.fotoUrl = fotoBase64; // somente aqui
 
-    const pfPath = `usuarios/${uid}/cadastro/PessoaFisica`;
-    const pjPath = `usuarios/${uid}/cadastro/PessoaJuridica`;
-
-    // Multi-location update:
-    // - PF completo
-    // - Se houver foto, também grava (ou cria) fotoUrl em PessoaJuridica
+    // Atualiza SOMENTE PessoaFisica
     const updates = {};
-    updates[pfPath] = dataPF;
-    if (fotoBase64) {
-      updates[`${pjPath}/fotoUrl`] = fotoBase64; // cria a chave se não existir
-    }
+    updates[`usuarios/${uid}/cadastro/PessoaFisica`] = dataPF;
 
     await update(ref(db), updates);
 
-    // Notifica a UI que salvou com sucesso (UI faz redirect)
     document.dispatchEvent(new CustomEvent('cadastro:saved', { detail: { data: dataPF, redirectTo: '/Dashboard/dashboard.html' } }));
-
   } catch (error) {
     console.error("Erro ao salvar cadastro:", error);
     document.dispatchEvent(new CustomEvent('cadastro:error', { detail: { message: error?.message || 'Erro ao salvar cadastro.' } }));
