@@ -3,15 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Login</title>
+  <title>Recuperar senha</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="entrar.css"/>
-  <script type="module" src="login.js" defer></script>
+  <!-- Reaproveita o mesmo CSS do login -->
+  <link rel="stylesheet" href="recuperar_senha.css"/>
 
+  <!-- UI (importa funções do arquivo de banco) -->
+  <script type="module" src="/Recuperar Senha/script.js" defer></script>
 </head>
 <body>
   <main class="login">
@@ -32,10 +34,10 @@
 
     <section class="panel">
       <div class="panel-inner">
-        <h1>Login</h1>
-        <p class="subtitle">Digite seu email e senha</p>
+        <h1>Recuperar senha</h1>
+        <p class="subtitle">Digite seu email para receber o link de redefinição</p>
 
-        <form id="loginForm" novalidate>
+        <form id="recoverForm" novalidate>
           <!-- Email -->
           <div class="group" id="group-email">
             <label for="email">Email</label>
@@ -50,32 +52,12 @@
             </div>
           </div>
 
-          <!-- Senha -->
-          <div class="group" id="group-password">
-            <label for="password">Senha</label>
-            <div class="field with-action">
-              <input id="password" name="password" type="password" autocomplete="current-password"
-                     required minlength="8" placeholder="Sua senha" />
-              <button class="icon-btn eye" id="togglePassword" type="button" aria-label="Mostrar senha">
-                <svg class="icon-eye" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fill="currentColor" d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 110-10 5 5 0 010 10z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="help-row">
-            <a href="/Recuperar Senha/recuperar_senha.html" class="muted-link" target="_blank" rel="noopener noreferrer">
-              Esqueceu a senha?
-            </a>
-          </div>
-
-          <!-- Botão de submit com estilo pílula -->
-          <button type="submit" class="btn btn-primary btn-cta">Entrar</button>
+          <!-- Botão enviar -->
+          <button type="submit" id="btnSend" class="btn btn-primary btn-cta">Enviar link</button>
 
           <p class="foot">
-            Ainda não tem uma conta?
-            <a href="/Criar conta/criar_conta.html" class="link" rel="noopener noreferrer">Criar conta</a>
+            Lembrou a senha?
+            <a href="/Entrar/entrar.html" class="link">Voltar ao login</a>
           </p>
         </form>
       </div>
@@ -83,6 +65,5 @@
   </main>
 
   <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
-  <script src="entrar.js" defer></script>
 </body>
 </html>
