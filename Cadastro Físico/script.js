@@ -1,7 +1,6 @@
 // script.js (module)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBRVmQSKkQ2uyM-wqhHwQTcZVreNRk3u9w",
@@ -16,7 +15,16 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const storage = getStorage(app);
+
+// File -> Base64 (DataURL)
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.readAsDataURL(file);
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+  });
+}
 
 // Escuta o evento disparado pela UI quando o formulário é válido
 document.addEventListener('cadastro:submit', async () => {
@@ -41,34 +49,43 @@ document.addEventListener('cadastro:submit', async () => {
   const fotoFile = document.getElementById("uploadFoto")?.files?.[0];
 
   try {
-    let fotoUrl = "";
-
+    let fotoBase64 = "";
     if (fotoFile) {
-      const extension = (fotoFile.name.match(/\.(\w+)$/) || [])[1] || 'jpg';
-      const storagePath = `usuarios/${uid}/avatar.${extension}`;
-      const fileRef = storageRef(storage, storagePath);
-      await uploadBytes(fileRef, fotoFile);
-      fotoUrl = await getDownloadURL(fileRef);
+      fotoBase64 = await fileToBase64(fotoFile);
     }
 
-    // Atualiza/insere os dados sob usuarios/{uid}/cadastro/PessoaFisica
-    const data = {
+    // Dados do cadastro (PF)
+    const dataPF = {
       nome,
       cpf,
       nascimento,
       sexo,
       telefone,
-      fotoUrl: fotoUrl || "",
+      fotoUrl: fotoBase64 || "",
       updatedAt: Date.now()
     };
 
-    await update(ref(db, `usuarios/${uid}/cadastro/PessoaFisica`), data);
+    // Multi-location update:
+    // - Salva o cadastro completo em usuarios/{uid}/cadastro/PessoaFisica
+    // - Se tiver foto, salva também em usuarios/{uid}/avatar (para uso geral no perfil)
+    const updates = {};
+    updates[`usuarios/${uid}/cadastro/PessoaFisica`] = dataPF;
+    if (fotoBase64) {
+      updates[`usuarios/${uid}/avatar`] = fotoBase64;
+    }
+
+    await update(ref(db), updates);
 
     // Notifica a UI que salvou com sucesso (UI faz redirect)
-    document.dispatchEvent(new CustomEvent('cadastro:saved', { detail: { data, redirectTo: '/Dashboard/dashboard.html' } }));
+    document.dispatchEvent(new CustomEvent('cadastro:saved', { detail: { data: dataPF, redirectTo: '/Dashboard/dashboard.html' } }));
 
   } catch (error) {
     console.error("Erro ao salvar cadastro:", error);
     document.dispatchEvent(new CustomEvent('cadastro:error', { detail: { message: error?.message || 'Erro ao salvar cadastro.' } }));
+  } finally {
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Realizar Cadastro';
+    }
   }
 });
