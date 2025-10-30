@@ -13,10 +13,18 @@ const firebaseConfig = {
   databaseURL: "https://adopet-pi-default-rtdb.firebaseio.com/"
 };
 
-// Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
+
+// Seleciona nome e e-mail do topo sem alterar HTML
+function getHeaderEls() {
+  const root = document.querySelector(".profile-card .card-body .flex-grow-1");
+  const nameEl = root?.querySelector("h2.h6.fw-normal");
+  const emailEl = root?.querySelector(".text-secondary.small");
+  return { nameEl, emailEl };
+}
+const { nameEl: userNameEl, emailEl: userEmailEl } = getHeaderEls();
 
 // ----- Meus Animais -----
 const btnMeusAnimais = document.getElementById("btnMeusAnimais");
@@ -38,21 +46,30 @@ const cepEl = document.getElementById("cepUser");
 const cidadeEl = document.getElementById("cidadeUser");
 const estadoEl = document.getElementById("estadoUser");
 
-// Toggle do "Sobre" no padrão das outras seções
+// ----- Sobre -----
 const btnSobre = document.getElementById("btnSobre");
 const conteudoSobre = document.getElementById("conteudoSobre");
 
-// Guarda usuário e garante readiness do Auth
+// Estado do auth
 let currentUser = null;
 let authResolved = false;
 const authReady = new Promise((resolve) => {
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     currentUser = user || null;
+
+    // Email do Auth (ou fallback)
+    if (userEmailEl) {
+      userEmailEl.textContent = user?.email || "—";
+    }
+
+    // Nome com prioridade para ONG: pessoaJuridica.instituicao
+    await preencherNomeDoUsuario();
+
     if (!authResolved) { authResolved = true; resolve(user); }
   });
 });
 
-// Utilidades (Minhas Informações)
+// Utilidades PF/PJ
 const PF_KEYS = ["pessoa_fisica", "pessoaFisica", "PessoaFisica", "fisica", "pf", "pessoafisica", "pessoa física"];
 const PJ_KEYS = ["pessoa_juridica", "pessoaJuridica", "PessoaJuridica", "juridica", "pj", "pessoajuridica", "pessoa jurídica"];
 
@@ -82,6 +99,66 @@ function renderFields(container, data) {
   container.innerHTML = lines.join("");
 }
 
+// Nome no cabeçalho (prioriza ONG: pessoaJuridica.instituicao)
+async function preencherNomeDoUsuario() {
+  try {
+    let nome = null;
+
+    if (!currentUser) {
+      if (userNameEl) userNameEl.textContent = "Usuário";
+      return;
+    }
+
+    const snap = await get(ref(db, `usuarios/${currentUser.uid}`));
+    const u = snap.exists() ? snap.val() : null;
+
+    // PF/PJ
+    const cadastro = u?.cadastro;
+    const pfNode = cadastro ? findNode(cadastro, PF_KEYS) : null;
+    const pjNode = cadastro ? findNode(cadastro, PJ_KEYS) : null;
+
+    // Se houver "dados" dentro, usa ele; senão usa o próprio nó
+    const pfData = pfNode ? (pfNode.dados ?? pfNode) : null;
+    const pjData = pjNode ? (pjNode.dados ?? pjNode) : null;
+
+    // 1) Prioridade para ONG: pessoaJuridica.instituicao
+    if (pjData && pjData.instituicao) {
+      nome = String(pjData.instituicao);
+    }
+
+    // 2) Se não for ONG (ou não tiver instituicao), tenta um nome direto salvo no usuário
+    if (!nome && u && typeof u === "object" && u.nome) {
+      nome = String(u.nome);
+    }
+
+    // 3) Fallback PF (se existir)
+    if (!nome && pfData) {
+      nome = String(pfData.nome || pfData.nomeCompleto || pfData.nome_completo || "");
+    }
+
+    // 4) Fallback PJ (outras chaves comuns)
+    if (!nome && pjData) {
+      nome = String(
+        pjData.razaoSocial ||
+        pjData.razao_social ||
+        pjData.nomeFantasia ||
+        pjData.nome_fantasia ||
+        ""
+      );
+    }
+
+    // 5) Fallback final: displayName do Auth
+    if (!nome && currentUser.displayName) {
+      nome = currentUser.displayName;
+    }
+
+    if (userNameEl) userNameEl.textContent = nome || "Usuário";
+  } catch (e) {
+    console.warn("Não foi possível carregar o nome do usuário:", e);
+    if (userNameEl) userNameEl.textContent = "Usuário";
+  }
+}
+
 // Meus Animais
 btnMeusAnimais?.addEventListener("click", async (e) => {
   e.preventDefault();
@@ -90,7 +167,7 @@ btnMeusAnimais?.addEventListener("click", async (e) => {
   const isHidden = conteudoAnimais.classList.contains("conteudo-oculto");
   if (isHidden) {
     animaisConteudo.innerHTML = `<p class="text-muted mb-0">Carregando...</p>`;
-    await authReady; // garante user pronto
+    await authReady;
     await carregarMeusAnimais();
     conteudoAnimais.classList.remove("conteudo-oculto");
   } else {
@@ -102,23 +179,11 @@ async function carregarMeusAnimais() {
   if (!currentUser) { animaisConteudo.innerHTML = `<p class="text-danger mb-0">Usuário não autenticado.</p>`; return; }
   const uid = currentUser.uid;
 
-  // Raiz da coleção de animais
   const ROOTS = ["animal_Cadastrado"];
-
-  // Possíveis caminhos para o campo donoUid (variações e aninhado)
-  const DONO_PATHS = [
-    "donoUid",
-    "DonoUid",
-    "ownerUid",
-    "uidDono",
-    "dados/donoUid",
-    "dados/DonoUid",
-  ];
+  const DONO_PATHS = ["donoUid", "DonoUid", "ownerUid", "uidDono", "dados/donoUid", "dados/DonoUid"];
 
   let itens = [];
-
   try {
-    // 1) Tenta consultas com orderByChild + equalTo para cada caminho possível
     for (const root of ROOTS) {
       const rootRef = ref(db, root);
       for (const path of DONO_PATHS) {
@@ -132,23 +197,15 @@ async function carregarMeusAnimais() {
               itens.push({ id, ...data });
             });
           }
-        } catch {
-          // Se o path não existir como índice, só ignora e tenta o próximo
-        }
+        } catch { /* ignora path sem índice */ }
       }
     }
 
-    // Remove duplicados (caso o mesmo item apareça em mais de uma consulta)
     if (itens.length > 0) {
       const seen = new Set();
-      itens = itens.filter(a => {
-        if (seen.has(a.id)) return false;
-        seen.add(a.id);
-        return true;
-      });
+      itens = itens.filter(a => !seen.has(a.id) && (seen.add(a.id), true));
     }
 
-    // 2) Fallback: se nada encontrado via query, carrega a lista e filtra no cliente
     if (itens.length === 0) {
       for (const root of ROOTS) {
         const listRef = ref(db, root);
@@ -157,10 +214,7 @@ async function carregarMeusAnimais() {
           listSnap.forEach(child => {
             const id = child.key;
             const data = child.val() || {};
-            const dono = data?.donoUid;
-            if (dono === uid) {
-              itens.push({ id, ...data });
-            }
+            if (data?.donoUid === uid) itens.push({ id, ...data });
           });
         }
       }
@@ -171,7 +225,6 @@ async function carregarMeusAnimais() {
       return;
     }
 
-    // Renderiza lista
     animaisConteudo.innerHTML = renderAnimaisLista(itens);
   } catch (err) {
     console.error("Meus Animais:", err);
@@ -180,9 +233,7 @@ async function carregarMeusAnimais() {
 }
 
 function renderAnimaisLista(animais) {
-  // Ordena opcionalmente por criadoEm (mais recente primeiro, se for ISO)
   animais.sort((a, b) => (b.criadoEm || "").localeCompare(a.criadoEm || ""));
-
   const items = animais.map(a => {
     const nome = a.nome || "(Sem nome)";
     const especie = a.especie || "";
@@ -190,7 +241,6 @@ function renderAnimaisLista(animais) {
     const idade = a.idade || "";
     const status = a.disponivel === false ? "Indisponível" : "Disponível";
     const foto = a.fotoUrl || "";
-
     return `
       <li class="list-group-item d-flex gap-3 align-items-start">
         ${foto ? `<img src="${foto}" alt="Foto de ${nome}" class="rounded" style="width:64px;height:64px;object-fit:cover;">`
@@ -206,7 +256,6 @@ function renderAnimaisLista(animais) {
       </li>
     `;
   }).join("");
-
   return `<ul class="list-group">${items}</ul>`;
 }
 
@@ -236,9 +285,15 @@ async function carregarInformacoes() {
     const pjNode = findNode(cadastro, PJ_KEYS);
     const pfData = pfNode ? (pfNode.dados ?? pfNode) : null;
     const pjData = pjNode ? (pjNode.dados ?? pjNode) : null;
+
     if (pfData) { pfBlock?.classList.remove("d-none"); renderFields(pfCampos, pfData); } else { pfBlock?.classList.add("d-none"); }
     if (pjData) { pjBlock?.classList.remove("d-none"); renderFields(pjCampos, pjData); } else { pjBlock?.classList.add("d-none"); }
-    if (!pfData && !pjData) { pfBlock?.classList.remove("d-none"); pfCampos.innerHTML = `<p>Nenhum cadastro encontrado.</p>`; pjBlock?.classList.add("d-none"); }
+
+    if (!pfData && !pjData) {
+      pfBlock?.classList.remove("d-none");
+      pfCampos.innerHTML = `<p>Nenhum cadastro encontrado.</p>`;
+      pjBlock?.classList.add("d-none");
+    }
   } catch (err) {
     console.error("Info:", err);
     if (pfBlock) { pfBlock.classList.remove("d-none"); pfCampos.innerHTML = `<p class="text-danger">Erro ao carregar.</p>`; }
@@ -282,12 +337,10 @@ async function carregarEndereco() {
   }
 }
 
-//SOBRE
-
+// Sobre
 btnSobre?.addEventListener("click", (e) => {
   e.preventDefault();
   if (!conteudoSobre) return;
-
   const isHidden = conteudoSobre.classList.contains("conteudo-oculto");
   if (isHidden) {
     conteudoSobre.classList.remove("conteudo-oculto");
