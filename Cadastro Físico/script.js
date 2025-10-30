@@ -61,17 +61,21 @@ document.addEventListener('cadastro:submit', async () => {
       nascimento,
       sexo,
       telefone,
+      // salva somente em fotoUrl (nada de "avatar")
       fotoUrl: fotoBase64 || "",
       updatedAt: Date.now()
     };
 
+    const pfPath = `usuarios/${uid}/cadastro/PessoaFisica`;
+    const pjPath = `usuarios/${uid}/cadastro/PessoaJuridica`;
+
     // Multi-location update:
-    // - Salva o cadastro completo em usuarios/{uid}/cadastro/PessoaFisica
-    // - Se tiver foto, salva também em usuarios/{uid}/avatar (para uso geral no perfil)
+    // - PF completo
+    // - Se houver foto, também grava (ou cria) fotoUrl em PessoaJuridica
     const updates = {};
-    updates[`usuarios/${uid}/cadastro/PessoaFisica`] = dataPF;
+    updates[pfPath] = dataPF;
     if (fotoBase64) {
-      updates[`usuarios/${uid}/avatar`] = fotoBase64;
+      updates[`${pjPath}/fotoUrl`] = fotoBase64; // cria a chave se não existir
     }
 
     await update(ref(db), updates);
