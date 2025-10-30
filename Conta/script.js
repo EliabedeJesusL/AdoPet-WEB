@@ -26,53 +26,13 @@ function getHeaderEls() {
 }
 const { nameEl: userNameEl, emailEl: userEmailEl } = getHeaderEls();
 
-// ----- Meus Animais -----
-const btnMeusAnimais = document.getElementById("btnMeusAnimais");
-const conteudoAnimais = document.getElementById("conteudoAnimais");
-const animaisConteudo = document.getElementById("animaisConteudo");
-
-// ----- Minhas Informações -----
-const btnInfo = document.getElementById("btnInfo");
-const conteudoInfo = document.getElementById("conteudoInfo");
-const pfBlock = document.getElementById("pfBlock");
-const pjBlock = document.getElementById("pjBlock");
-const pfCampos = document.getElementById("pfCampos");
-const pjCampos = document.getElementById("pjCampos");
-
-// ----- Endereço -----
-const btnEndereco = document.getElementById("btnEndereco");
-const conteudoEndereco = document.getElementById("conteudoEndereco");
-const cepEl = document.getElementById("cepUser");
-const cidadeEl = document.getElementById("cidadeUser");
-const estadoEl = document.getElementById("estadoUser");
-
-// ----- Sobre -----
-const btnSobre = document.getElementById("btnSobre");
-const conteudoSobre = document.getElementById("conteudoSobre");
-
-// Estado do auth
-let currentUser = null;
-let authResolved = false;
-const authReady = new Promise((resolve) => {
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user || null;
-
-    // Email do Auth (ou fallback)
-    if (userEmailEl) {
-      userEmailEl.textContent = user?.email || "—";
-    }
-
-    // Nome com prioridade para ONG: pessoaJuridica.instituicao
-    await preencherNomeDoUsuario();
-
-    if (!authResolved) { authResolved = true; resolve(user); }
-  });
-});
+// ----- Elementos de avatar (topo) -----
+const avatarBox = document.querySelector(".profile-card .profile-avatar");
+const avatarIcon = avatarBox?.querySelector("i");
 
 // Utilidades PF/PJ
 const PF_KEYS = ["pessoa_fisica", "pessoaFisica", "PessoaFisica", "fisica", "pf", "pessoafisica", "pessoa física"];
 const PJ_KEYS = ["pessoa_juridica", "pessoaJuridica", "PessoaJuridica", "juridica", "pj", "pessoajuridica", "pessoa jurídica"];
-
 function normalizeKey(k) { return String(k).replace(/\s+/g, "").toLowerCase(); }
 function findNode(obj, candidates) {
   if (!obj || typeof obj !== "object") return null;
@@ -88,16 +48,26 @@ function humanize(label) {
   if (map[nk]) return map[nk];
   return label.replace(/[_-]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").replace(/\s+/g, " ").replace(/^./, c => c.toUpperCase());
 }
-function renderFields(container, data) {
-  if (!container) return;
-  if (!data || typeof data !== "object") { container.innerHTML = `<p>—</p>`; return; }
-  const lines = [];
-  for (const [k, v] of Object.entries(data)) {
-    const value = v == null ? "—" : (typeof v === "object" ? JSON.stringify(v) : String(v));
-    lines.push(`<p><strong>${humanize(k)}:</strong> ${value}</p>`);
-  }
-  container.innerHTML = lines.join("");
-}
+
+// Estado do auth e cache de perfil
+let currentUser = null;
+let authResolved = false;
+let lastUserProfile = null;
+
+const authReady = new Promise((resolve) => {
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user || null;
+
+    // Email do Auth (ou fallback)
+    if (userEmailEl) userEmailEl.textContent = user?.email || "—";
+
+    // Preenche nome e foto do topo
+    await preencherNomeDoUsuario();
+    await preencherFotoPerfil();
+
+    if (!authResolved) { authResolved = true; resolve(user); }
+  });
+});
 
 // Nome no cabeçalho (prioriza ONG: pessoaJuridica.instituicao)
 async function preencherNomeDoUsuario() {
@@ -111,46 +81,32 @@ async function preencherNomeDoUsuario() {
 
     const snap = await get(ref(db, `usuarios/${currentUser.uid}`));
     const u = snap.exists() ? snap.val() : null;
+    lastUserProfile = u;
 
-    // PF/PJ
     const cadastro = u?.cadastro;
     const pfNode = cadastro ? findNode(cadastro, PF_KEYS) : null;
     const pjNode = cadastro ? findNode(cadastro, PJ_KEYS) : null;
-
-    // Se houver "dados" dentro, usa ele; senão usa o próprio nó
     const pfData = pfNode ? (pfNode.dados ?? pfNode) : null;
     const pjData = pjNode ? (pjNode.dados ?? pjNode) : null;
 
-    // 1) Prioridade para ONG: pessoaJuridica.instituicao
-    if (pjData && pjData.instituicao) {
-      nome = String(pjData.instituicao);
-    }
+    // 1) Prioridade para ONG: instituicao
+    if (pjData?.instituicao) nome = String(pjData.instituicao);
 
-    // 2) Se não for ONG (ou não tiver instituicao), tenta um nome direto salvo no usuário
-    if (!nome && u && typeof u === "object" && u.nome) {
-      nome = String(u.nome);
-    }
+    // 2) Nome direto salvo no usuário
+    if (!nome && u?.nome) nome = String(u.nome);
 
-    // 3) Fallback PF (se existir)
+    // 3) PF
     if (!nome && pfData) {
       nome = String(pfData.nome || pfData.nomeCompleto || pfData.nome_completo || "");
     }
 
-    // 4) Fallback PJ (outras chaves comuns)
+    // 4) PJ (outras chaves comuns)
     if (!nome && pjData) {
-      nome = String(
-        pjData.razaoSocial ||
-        pjData.razao_social ||
-        pjData.nomeFantasia ||
-        pjData.nome_fantasia ||
-        ""
-      );
+      nome = String(pjData.razaoSocial || pjData.razao_social || pjData.nomeFantasia || pjData.nome_fantasia || "");
     }
 
-    // 5) Fallback final: displayName do Auth
-    if (!nome && currentUser.displayName) {
-      nome = currentUser.displayName;
-    }
+    // 5) Fallback Auth
+    if (!nome && currentUser.displayName) nome = currentUser.displayName;
 
     if (userNameEl) userNameEl.textContent = nome || "Usuário";
   } catch (e) {
@@ -159,7 +115,62 @@ async function preencherNomeDoUsuario() {
   }
 }
 
-// Meus Animais
+// Define a foto no avatar do topo (prioriza PJ.fotoUrl; senão PF.fotoUrl)
+async function preencherFotoPerfil() {
+  try {
+    if (!currentUser || !avatarBox) return;
+
+    let u = lastUserProfile;
+    if (!u) {
+      const snap = await get(ref(db, `usuarios/${currentUser.uid}`));
+      u = snap.exists() ? snap.val() : null;
+      lastUserProfile = u;
+    }
+    if (!u) return;
+
+    const cadastro = u?.cadastro;
+    const pfNode = cadastro ? findNode(cadastro, PF_KEYS) : null;
+    const pjNode = cadastro ? findNode(cadastro, PJ_KEYS) : null;
+    const pfData = pfNode ? (pfNode.dados ?? pfNode) : null;
+    const pjData = pjNode ? (pjNode.dados ?? pjNode) : null;
+
+    // Foto: prioriza PJ.fotoUrl; depois PF.fotoUrl; também aceita 'logoUrl' legado só para exibir
+    const foto = pjData?.fotoUrl || pfData?.fotoUrl || pjData?.logoUrl || null;
+
+    setAvatarPhoto(foto);
+  } catch (e) {
+    console.warn("Não foi possível carregar a foto do perfil:", e);
+  }
+}
+
+function setAvatarPhoto(url) {
+  if (!avatarBox) return;
+  // Remove img anterior se existir
+  const oldImg = avatarBox.querySelector("img.__avatar");
+  if (oldImg) oldImg.remove();
+
+  if (url && typeof url === "string") {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "Foto de perfil";
+    img.className = "__avatar";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    img.style.borderRadius = "50%";
+
+    avatarBox.appendChild(img);
+    if (avatarIcon) avatarIcon.style.display = "none";
+  } else {
+    if (avatarIcon) avatarIcon.style.display = "";
+  }
+}
+
+// ----- Meus Animais -----
+const btnMeusAnimais = document.getElementById("btnMeusAnimais");
+const conteudoAnimais = document.getElementById("conteudoAnimais");
+const animaisConteudo = document.getElementById("animaisConteudo");
+
 btnMeusAnimais?.addEventListener("click", async (e) => {
   e.preventDefault();
   if (!conteudoAnimais || !animaisConteudo) return;
@@ -259,7 +270,48 @@ function renderAnimaisLista(animais) {
   return `<ul class="list-group">${items}</ul>`;
 }
 
-// Minhas Informações
+// ----- Minhas Informações -----
+const btnInfo = document.getElementById("btnInfo");
+const conteudoInfo = document.getElementById("conteudoInfo");
+const pfBlock = document.getElementById("pfBlock");
+const pjBlock = document.getElementById("pjBlock");
+const pfCampos = document.getElementById("pfCampos");
+const pjCampos = document.getElementById("pjCampos");
+
+// renderiza campos, mostrando imagem nos campos de fotoUrl/logoUrl
+function renderFields(container, data) {
+  if (!container) return;
+  if (!data || typeof data !== "object") {
+    container.innerHTML = `<p>—</p>`;
+    return;
+  }
+
+  const rows = [];
+  for (const [k, v] of Object.entries(data)) {
+    const nk = normalizeKey(k);
+
+    // Se for foto, renderiza a imagem
+    if ((nk === "fotourl" || nk === "logourl") && typeof v === "string" && v) {
+      rows.push(`
+        <div class="mb-2">
+          <strong>${nk === "logourl" ? "Logo" : "Foto"}:</strong><br>
+          <img src="${v}" alt="Imagem" style="max-width:160px; max-height:160px; width:auto; height:auto; object-fit:cover; border-radius:8px; border:1px solid #e5e6e8;">
+        </div>
+      `);
+      continue; // não imprime o URL como texto
+    }
+
+    // Valor padrão
+    const value =
+      v == null ? "—" :
+      typeof v === "object" ? JSON.stringify(v) :
+      String(v);
+
+    rows.push(`<p><strong>${humanize(k)}:</strong> ${value}</p>`);
+  }
+  container.innerHTML = rows.join("");
+}
+
 btnInfo?.addEventListener("click", async (e) => {
   e.preventDefault();
   if (!conteudoInfo) return;
@@ -277,10 +329,17 @@ btnInfo?.addEventListener("click", async (e) => {
 async function carregarInformacoes() {
   if (!currentUser) { pfBlock?.classList.add("d-none"); pjBlock?.classList.add("d-none"); return; }
   try {
-    const cadRef = ref(db, `usuarios/${currentUser.uid}/cadastro`);
-    const snap = await get(cadRef);
-    if (!snap.exists()) { pfBlock?.classList.add("d-none"); pjBlock?.classList.add("d-none"); return; }
-    const cadastro = snap.val();
+    // Usa o cache se já existir; senão busca
+    let u = lastUserProfile;
+    if (!u) {
+      const snap = await get(ref(db, `usuarios/${currentUser.uid}/cadastro`));
+      if (!snap.exists()) { pfBlock?.classList.add("d-none"); pjBlock?.classList.add("d-none"); return; }
+      u = { cadastro: snap.val() };
+    }
+
+    const cadastro = u?.cadastro;
+    if (!cadastro) { pfBlock?.classList.add("d-none"); pjBlock?.classList.add("d-none"); return; }
+
     const pfNode = findNode(cadastro, PF_KEYS);
     const pjNode = findNode(cadastro, PJ_KEYS);
     const pfData = pfNode ? (pfNode.dados ?? pfNode) : null;
@@ -301,7 +360,13 @@ async function carregarInformacoes() {
   }
 }
 
-// Endereço
+// ----- Endereço -----
+const btnEndereco = document.getElementById("btnEndereco");
+const conteudoEndereco = document.getElementById("conteudoEndereco");
+const cepEl = document.getElementById("cepUser");
+const cidadeEl = document.getElementById("cidadeUser");
+const estadoEl = document.getElementById("estadoUser");
+
 btnEndereco?.addEventListener("click", async (e) => {
   e.preventDefault();
   if (!conteudoEndereco) return;
@@ -337,7 +402,10 @@ async function carregarEndereco() {
   }
 }
 
-// Sobre
+// ----- Sobre -----
+const btnSobre = document.getElementById("btnSobre");
+const conteudoSobre = document.getElementById("conteudoSobre");
+
 btnSobre?.addEventListener("click", (e) => {
   e.preventDefault();
   if (!conteudoSobre) return;
