@@ -25,7 +25,7 @@
     <header class="border-bottom bg-white">
       <div class="container-xxl py-3 d-flex align-items-center justify-content-between gap-3">
         <div class="d-flex align-items-center gap-3">
-          <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="/Dashboard/dashboard.html">
+          <a class="navbar-brand d-flex align-items-center gap-2 m-0" href="../Dashboard/dashboard.html">
             <i class="bi bi-heart-fill text-accent"></i>
             <span class="fw-semibold">Adopet</span>
           </a>
@@ -52,7 +52,7 @@
           <button class="btn btn-outline-secondary" aria-label="Notificações">
             <i class="bi bi-bell"></i>
           </button>
-          <a class="btn btn-outline-secondary" href="/Chat/chat.html" aria-label="Mensagens">
+          <a class="btn btn-outline-secondary" href="../Chat/chat.html" aria-label="Mensagens">
             <i class="bi bi-chat-dots"></i>
           </a>
         </div>
@@ -75,14 +75,15 @@
             <!-- Logo + dados -->
             <div class="px-3 px-md-4 pt-3 text-center">
               <img
-                src="caramelo-logo.png"
-                alt="Instituto Caramelo"
+                id="logoInstituicao"
+                src="https://via.placeholder.com/180x120?text=Logo"
+                alt="Logo da Instituição"
                 class="img-fluid rounded mb-3"
                 style="max-width: 180px;"
               />
-              <h1 class="h4 mb-1">Instituto Caramelo</h1>
-              <p class="mb-0 text-accent">CNPJ • 01.234.567/0001-00</p>
-              <p class="mb-0 text-danger">Banco: XXX-XXX</p>
+              <h1 class="h4 mb-1" id="nomeInstituicao">Carregando...</h1>
+              <p class="mb-0 text-accent" id="cnpjInstituicao">CNPJ • Carregando...</p>
+              <p class="mb-0 text-danger" id="bancoInstituicao">Dados bancários disponíveis no contato</p>
             </div>
 
             <!-- Corpo -->
@@ -105,19 +106,19 @@
           <div class="sticky-lg-top" style="top: 1.25rem">
             <div class="card shadow-sm d-none d-lg-block side-menu-card">
               <nav class="list-group list-group-flush side-tabs">
-                <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                <a href="../Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
                   <i class="bi bi-house side-icon"></i><span>Início</span>
                 </a>
-                <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                <a href="../Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
                   <i class="bi bi-compass side-icon"></i><span>Explorar</span>
                 </a>
-                <a href="/Cadastro de Animal/cadastro_animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                <a href="../Cadastro de Animal/cadastro_animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
                   <i class="bi bi-plus-circle side-icon"></i><span>Cadastrar</span>
                 </a>
-                <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" aria-current="page">
+                <a href="../Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" aria-current="page">
                   <i class="bi bi-gift side-icon"></i><span>Doe</span>
                 </a>
-                <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
+                <a href="../Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab">
                   <i class="bi bi-person side-icon"></i><span>Conta</span>
                 </a>
               </nav>
@@ -131,11 +132,11 @@
               </div>
               <div class="offcanvas-body p-0">
                 <nav class="list-group list-group-flush side-tabs">
-                  <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-house side-icon"></i><span>Início</span></a>
-                  <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-compass side-icon"></i><span>Explorar</span></a>
-                  <a href="/Cadastro de Animal/cadastro_animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-plus-circle side-icon"></i><span>Cadastrar</span></a>
-                  <a href="/Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" aria-current="page"><i class="bi bi-gift side-icon"></i><span>Doe</span></a>
-                  <a href="/Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-person side-icon"></i><span>Conta</span></a>
+                  <a href="../Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-house side-icon"></i><span>Início</span></a>
+                  <a href="../Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-compass side-icon"></i><span>Explorar</span></a>
+                  <a href="../Cadastro de Animal/cadastro_animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-plus-circle side-icon"></i><span>Cadastrar</span></a>
+                  <a href="../Doe/doe.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" aria-current="page"><i class="bi bi-gift side-icon"></i><span>Doe</span></a>
+                  <a href="../Conta/conta.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab"><i class="bi bi-person side-icon"></i><span>Conta</span></a>
                 </nav>
               </div>
             </div>
@@ -148,19 +149,19 @@
     <nav class="navbar fixed-bottom bg-white border-top d-md-none">
       <div class="container-fluid px-3">
         <div class="d-flex justify-content-between w-100 text-center small">
-          <a href="/Dashboard/dashboard.html" class="text-secondary text-decoration-none flex-fill py-2">
+          <a href="../Dashboard/dashboard.html" class="text-secondary text-decoration-none flex-fill py-2">
             <div><i class="bi bi-house fs-5"></i></div>Início
           </a>
-          <a href="/Explorar/explorar.html" class="text-secondary text-decoration-none flex-fill py-2">
+          <a href="../Explorar/explorar.html" class="text-secondary text-decoration-none flex-fill py-2">
             <div><i class="bi bi-compass fs-5"></i></div>Explorar
           </a>
-          <a href="/Cadastro de Animal/cadastro_animal.html" class="text-secondary text-decoration-none flex-fill py-2">
+          <a href="../Cadastro de Animal/cadastro_animal.html" class="text-secondary text-decoration-none flex-fill py-2">
             <div><i class="bi bi-plus-circle fs-5"></i></div>Cadastrar
           </a>
-          <a href="/Doe/doe.html" class="text-accent text-decoration-none flex-fill py-2">
+          <a href="../Doe/doe.html" class="text-accent text-decoration-none flex-fill py-2">
             <div><i class="bi bi-gift fs-5"></i></div>Doe
           </a>
-          <a href="/Conta/conta.html" class="text-secondary text-decoration-none flex-fill py-2">
+          <a href="../Conta/conta.html" class="text-secondary text-decoration-none flex-fill py-2">
             <div><i class="bi bi-person fs-5"></i></div>Conta
           </a>
         </div>

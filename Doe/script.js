@@ -1,9 +1,7 @@
-// === IMPORTS FIREBASE ===
-import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
-// === CONFIGURAÇÃO FIREBASE ===
 const firebaseConfig = {
   apiKey: "AIzaSyBRVmQSKkQ2uyM-wqhHwQTcZVreNRk3u9w",
   authDomain: "adopet-pi.firebaseapp.com",
@@ -15,41 +13,32 @@ const firebaseConfig = {
   databaseURL: "https://adopet-pi-default-rtdb.firebaseio.com/"
 };
 
-// === INICIALIZAÇÃO SEGURA DO FIREBASE ===
-let app;
-try {
-  app = initializeApp(firebaseConfig);
-} catch (e) {
-  console.warn("Firebase já inicializado — reutilizando instância existente.");
-  app = getApp();
-}
-
+// Inicialização Firebase
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-// === ESTADO DE AUTENTICAÇÃO ===
+// Guarda o usuário autenticado
 let currentUser = null;
 let authResolved = false;
 const authReady = new Promise((resolve) => {
   onAuthStateChanged(auth, (user) => {
     currentUser = user || null;
-    if (!authResolved) {
-      authResolved = true;
-      resolve(user);
-    }
+    if (!authResolved) { authResolved = true; resolve(user); }
   });
 });
 
-// === ELEMENTOS DO DOM ===
+// ---- DOM Elements ----
 const gridInstituicoes = document.getElementById("gridInst");
 const btnCarregarInst = document.getElementById("btnCarregarInstituicoes");
 
-// === FUNÇÃO DE CRIAÇÃO DOS CARDS ===
+// ---- Funções utilitárias ----
 function criarCardInst(data) {
   const pj = data?.cadastro?.PessoaJuridica || {};
   const local = data?.localizacao || {};
 
-  if (!pj.instituicao) return null; // ignora cadastros inválidos
+  // só renderiza se for PJ com nome
+  if (!pj.instituicao) return null;
 
   const div = document.createElement("div");
   div.className = "col";
@@ -60,7 +49,7 @@ function criarCardInst(data) {
       data-causes="animais"
       data-modalities="${pj.aceitaDoacoes === 'Sim' ? 'doacao' : ''}"
       data-distance="5">
-      <img src="${pj.fotoUrl || 'https://via.placeholder.com/150?text=Sem+Foto'}"
+      <img src="${pj.fotoUrl || './assets/img/default.png'}"
            class="card-img-top"
            alt="${pj.instituicao}">
       <div class="card-body">
@@ -84,13 +73,9 @@ function criarCardInst(data) {
   return div;
 }
 
-// === FUNÇÃO PRINCIPAL: CARREGAR INSTITUIÇÕES ===
+// ---- Carregamento de Instituições ----
 async function carregarInstituicoes() {
-  if (!gridInstituicoes) {
-    console.warn("Elemento gridInst não encontrado no DOM.");
-    return;
-  }
-
+  if (!gridInstituicoes) return;
   gridInstituicoes.innerHTML = `
     <div class="text-center my-4" id="loadingMsg">
       <div class="spinner-border text-warning" role="status"></div>
@@ -118,7 +103,7 @@ async function carregarInstituicoes() {
     snapshot.forEach((child) => {
       const data = child.val();
       const pj = data?.cadastro?.PessoaJuridica || null;
-      if (!pj) return; // ignora Pessoa Física
+      if (!pj) return; // ignora PF
       const card = criarCardInst(data);
       if (card) {
         gridInstituicoes.appendChild(card);
@@ -135,7 +120,7 @@ async function carregarInstituicoes() {
       `;
     }
 
-    // Se houver função applyAll() (filtros), reaplica
+    // Reaplica filtros (se existir função applyAll)
     if (typeof applyAll === "function") {
       setTimeout(() => applyAll(), 300);
     }
@@ -153,27 +138,17 @@ async function carregarInstituicoes() {
   }
 }
 
-// === EVENTO DE BOTÃO (caso exista) ===
-if (btnCarregarInst) {
-  btnCarregarInst.addEventListener("click", async (e) => {
-    e.preventDefault();
-    try {
-      await authReady;
-      await carregarInstituicoes();
-    } catch (e) {
-      console.error("Erro ao carregar via botão:", e);
-    }
-  });
-}
+// ---- Botão de carregamento (ou carregamento automático) ----
+btnCarregarInst?.addEventListener("click", async (e) => {
+  e.preventDefault();
+  await authReady;
+  await carregarInstituicoes();
+});
 
-// === CARREGAMENTO AUTOMÁTICO ===
+// Carrega automaticamente ao abrir a página
 document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await authReady;
-    await carregarInstituicoes();
-  } catch (e) {
-    console.error("Erro ao iniciar:", e);
-  }
+  await authReady;
+  await carregarInstituicoes();
 });
 
 // === FUNÇÃO PARA ADICIONAR EVENT LISTENERS NOS BOTÕES DE DOAÇÃO ===
