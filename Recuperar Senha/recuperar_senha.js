@@ -1,83 +1,126 @@
-// recuperar.ui.js
-import { sendReset } from "./recuperar.db.js";
+// /Recuperar Senha/recuperar_senha.js
+import { sendReset } from "./script.js"; // importa do arquivo de banco na mesma pasta
 
-const $ = (sel) => document.querySelector(sel);
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("recoverForm");
+  const emailInput = document.getElementById("email");
+  const btnSend = document.getElementById("btnSend");
+  const btnBack = document.getElementById("btnBack");
+  const groupEmail = document.getElementById("group-email");
+  const toastEl = document.getElementById("toast");
 
-const form = $('#recoverForm');
-const email = $('#email');
-const emailField = document.querySelector('#group-email .field');
-const btnSend = $('#btnSend');
-const btnBack = $('#btnBack');
-const toast = $('#toast');
+  // Voltar
+  btnBack?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (history.length > 1) history.back();
+    else window.location.assign("/Entrar/entrar.html");
+  });
 
-// Botão voltar
-btnBack?.addEventListener('click', () => {
-  if (history.length > 1) history.back();
-  else window.location.href = 'index.html';
-});
+  // Validação em tempo real
+  emailInput?.addEventListener("input", () => {
+    clearError();
+    const valid = isValidEmail(emailInput.value);
+    setStatus(valid);
+    toggleButton(valid);
+  });
 
-// Validação do email (mesmo padrão do login)
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-function updateEmailStatus() {
-  emailField?.classList.toggle('valid', emailRegex.test(email.value.trim()));
-}
-email?.addEventListener('input', updateEmailStatus);
-email?.addEventListener('blur', updateEmailStatus);
+  // Estado inicial do botão
+  toggleButton(isValidEmail(emailInput?.value || ""));
 
-// Utilitários UI
-function setInvalid(groupId, invalid) {
-  const el = document.getElementById(groupId);
-  el?.classList.toggle('invalid', invalid);
-  el?.querySelector('input')?.setAttribute('aria-invalid', invalid ? 'true' : 'false');
-}
-function notify(text, duration = 2400) {
-  if (!toast) return;
-  toast.textContent = text;
-  toast.classList.add('show');
-  clearTimeout(notify._t);
-  notify._t = setTimeout(() => toast.classList.remove('show'), duration);
-}
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = (emailInput?.value || "").trim();
+    const valid = isValidEmail(email);
 
-// Submit
-form?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  setInvalid('group-email', false);
+    if (!email) {
+      showError("Campo de e-mail vazio!");
+      emailInput?.focus();
+      toggleButton(false);
+      return;
+    }
+    if (!valid) {
+      showError("Informe um e-mail válido.");
+      emailInput?.focus();
+      toggleButton(false);
+      return;
+    }
 
-  const em = email.value.trim();
-  if (!emailRegex.test(em)) {
-    setInvalid('group-email', true);
-    notify('Informe um email válido.');
-    return;
+    setLoading(true);
+
+    try {
+      await sendReset(email);
+      // Mensagem neutra (não expõe se o e-mail existe)
+      showToast("Se o e-mail estiver cadastrado, você receberá um link de redefinição.", "success");
+    } catch (error) {
+      const code = String(error?.code || "");
+      if (code === "auth/invalid-email") {
+        showError("E-mail inválido. Verifique e tente novamente.");
+      } else if (code === "auth/too-many-requests") {
+        showToast("Muitas tentativas. Tente novamente mais tarde.", "warning");
+      } else if (code === "auth/network-request-failed") {
+        showToast("Falha de rede. Verifique sua conexão e tente novamente.", "danger");
+      } else {
+        showToast("Erro ao enviar o e-mail de redefinição. Tente novamente.", "danger");
+      }
+    } finally {
+      setLoading(false);
+      toggleButton(isValidEmail(emailInput?.value || ""));
+    }
+  });
+
+  // Helpers
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v).toLowerCase());
   }
 
-  try {
-    btnSend.disabled = true;
-    btnSend.textContent = 'Enviando...';
+  function showError(msg) {
+    clearError();
+    if (!groupEmail) { alert(msg); return; }
+    const el = document.createElement("div");
+    el.className = "error-msg";
+    el.style.color = "#dc3545";
+    el.style.marginTop = "6px";
+    el.textContent = msg;
+    groupEmail.appendChild(el);
+    emailInput?.classList.add("is-invalid");
+    setStatus(false);
+  }
 
-    await sendReset(em);
+  function clearError() {
+    emailInput?.classList.remove("is-invalid");
+    const old = groupEmail?.querySelector(".error-msg");
+    if (old) old.remove();
+  }
 
-    notify('Enviamos o link de redefinição para seu email.');
-    btnSend.textContent = 'Enviar link';
+  function setStatus(valid) {
+    const status = groupEmail?.querySelector(".status");
+    if (status) status.style.opacity = valid ? "1" : "0.2";
+    emailInput?.classList.toggle("is-valid", valid);
+  }
 
-    // Opcional: voltar ao login após alguns segundos
+  function setLoading(isLoading) {
+    if (!btnSend) return;
+    if (isLoading) {
+      btnSend.dataset.text = btnSend.textContent || "Enviar link";
+      btnSend.textContent = "Enviando...";
+      btnSend.disabled = true;
+    } else {
+      btnSend.textContent = btnSend.dataset.text || "Enviar link";
+    }
+  }
+
+  function toggleButton(enable) {
+    if (!btnSend) return;
+    btnSend.disabled = !enable;
+  }
+
+  function showToast(message, type = "info") {
+    if (!toastEl) { alert(message); return; }
+    toastEl.textContent = message;
+    toastEl.className = `toast show toast-${type}`;
     setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 1800);
-  } catch (error) {
-    console.error('Erro ao enviar reset:', error?.code, error?.message);
-
-    let message = 'Não foi possível enviar o link. ';
-    if (error?.code === 'auth/user-not-found') message += 'Usuário não encontrado.';
-    else if (error?.code === 'auth/invalid-email') message += 'Email inválido.';
-    else if (error?.code === 'auth/too-many-requests') message += 'Muitas tentativas. Tente mais tarde.';
-    else message += (error?.message || '');
-
-    notify(message, 3000);
-  } finally {
-    btnSend.disabled = false;
-    btnSend.textContent = 'Enviar link';
+      toastEl.className = "toast";
+      toastEl.textContent = "";
+    }, 4000);
   }
 });
-
-// Estado inicial
-updateEmailStatus();

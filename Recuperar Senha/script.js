@@ -1,5 +1,5 @@
-// recuperar.db.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+// /Recuperar Senha/script.js
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 const firebaseConfig = {
@@ -12,11 +12,11 @@ const firebaseConfig = {
   measurementId: "G-0HP9DHD1ZF"
 };
 
-const app = initializeApp(firebaseConfig);
+// Evita re-inicializar o app se já existir
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// Exposto para a UI
 export async function sendReset(email) {
-  // Se quiser redirecionar após reset, configure actionCodeSettings no console
-  await sendPasswordResetEmail(auth, email);
-  return true;
+  return sendPasswordResetEmail(auth, email);
 }
