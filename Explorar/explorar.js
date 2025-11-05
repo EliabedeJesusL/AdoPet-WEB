@@ -5,10 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 
   const grid = $('#gridPets');
-  const cards = $$('.pet-card', grid).map(card => ({
-    el: card.closest('.col') || card, // oculta a coluna toda
-    card
-  }));
+
+  // Troque de const para let
+  let cards = [];
+  rebuildCards();
 
   const searchInput = $('#exploreSearch');
   const filterBtn = $('#btnFilters');
@@ -19,13 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnReset = $('#btnResetFilters');
   const offcanvasEl = $('#filtersOffcanvas');
 
+  // Quando o script de banco terminar de carregar os cards, atualizamos e reaplicamos filtros
+  window.addEventListener('explorar:cardsUpdated', () => {
+    rebuildCards();
+    applyAll();
+  });
+
   // Defaults
-  const defaults = {
-    species: [],  // vazio = todos
-    sex: [],
-    size: [],
-    distance: 100
-  };
+  const defaults = { species: [], sex: [], size: [], distance: 100 };
 
   // Carregar estado salvo
   let state = loadFilters();
@@ -45,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     state = readForm();
     saveFilters(state);
     applyAll();
-    // Indicar filtros ativos
     toggleFilterButtonActive(isAnyFilterActive(state));
     hideOffcanvas(offcanvasEl);
   });
@@ -60,6 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Utils
+  function rebuildCards() {
+    if (!grid) return;
+    cards = $$('.pet-card', grid).map(card => ({
+      el: card.closest('.col') || card,
+      card
+    }));
+  }
+
   function applyAll() {
     const term = (searchInput?.value || '').trim().toLowerCase();
     let visible = 0;
@@ -82,11 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (show) visible++;
     });
 
-    // Atualiza aparência do botão de filtro
     toggleFilterButtonActive(isAnyFilterActive(state));
-
-    // Opcional: você pode exibir um "Nenhum resultado" aqui
-    // ...
     return visible;
   }
 
@@ -101,14 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function hydrateForm(values) {
-    // Checkboxes
     ['species', 'sex', 'size'].forEach((name) => {
       const checked = new Set(values[name] || []);
-      $$(`input[name="${name}"]`, filtersForm).forEach((i) => {
-        i.checked = checked.has(i.value);
-      });
+      $$(`input[name="${name}"]`, filtersForm).forEach((i) => { i.checked = checked.has(i.value); });
     });
-    // Distância
     if (distanceInput) distanceInput.value = values.distance ?? defaults.distance;
     updateDistanceOutput();
   }
