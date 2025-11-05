@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         alert("✅ Cadastro concluído com sucesso!");
         localStorage.removeItem("ultimoAnimalId");
-        window.location.href = "Animal Cadastrado/animal_cadastrado.html";
+        window.location.href = "../Animal Cadastrado/animal_cadastrado.html";
       } catch (err) {
         console.error("❌ Erro ao enviar fotos:", err);
         alert("Erro ao salvar fotos. Veja o console para mais detalhes.");
