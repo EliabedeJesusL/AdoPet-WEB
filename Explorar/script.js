@@ -1,6 +1,7 @@
 // /Explorar/script.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 // Config do seu projeto
 const firebaseConfig = {
@@ -17,10 +18,35 @@ const firebaseConfig = {
 // Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 const gridPets = document.getElementById("gridPets");
 
-document.addEventListener("DOMContentLoaded", carregarAnimais);
+// Estado de login (fallback para localStorage enquanto o Auth inicializa)
+let isLoggedIn = !!localStorage.getItem("uid");
+onAuthStateChanged(auth, (user) => {
+  isLoggedIn = !!user;
+});
+
+// Intercepta cliques nos cards: se não logado, alerta e redireciona
+document.addEventListener("DOMContentLoaded", () => {
+  if (gridPets) {
+    gridPets.addEventListener("click", (e) => {
+      const anchor = e.target.closest("a");
+      const insideCard = !!e.target.closest(".pet-card");
+      if (!anchor || !insideCard) return;
+
+      // Qualquer link dentro de um card exige login
+      if (!isLoggedIn) {
+        e.preventDefault();
+        alert("Você precisa estar logado para ver os detalhes do animal.");
+        window.location.href = "/index.html";
+      }
+    });
+  }
+
+  carregarAnimais();
+});
 
 async function carregarAnimais() {
   if (!gridPets) return;
@@ -99,7 +125,6 @@ async function carregarAnimais() {
         <i class="bi bi-exclamation-triangle fs-1"></i>
         <p class="mt-3">Erro ao carregar os dados. Tente novamente mais tarde.</p>
       </div>`;
-    // Notifica UI mesmo em erro (opcional)
     window.dispatchEvent(new CustomEvent("explorar:cardsUpdated"));
   }
 }

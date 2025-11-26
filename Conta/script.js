@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getDatabase, ref, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 const firebaseConfig = {
@@ -416,3 +416,35 @@ btnSobre?.addEventListener("click", (e) => {
     conteudoSobre.classList.add("conteudo-oculto");
   }
 });
+
+// ===== Logout: remove UID e desloga do Firebase antes do redirecionamento =====
+const btnSair = document.getElementById('btnSair');
+const btnSairMobile = document.getElementById('btnSairMobile');
+
+// Captura o clique antes do handler da UI para garantir limpeza do UID
+function attachLogoutHandler(el) {
+  el?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const confirmed = confirm('Deseja realmente sair?');
+    if (!confirmed) return;
+
+    // Tenta deslogar do Firebase (ignora erros)
+    try { await signOut(auth); } catch {}
+
+    // Limpa UID e dados locais
+    try {
+      localStorage.removeItem('uid');
+      localStorage.removeItem('usuario');
+      sessionStorage.removeItem('visited');
+      sessionStorage.setItem('isLoggedIn', 'false');
+    } catch {}
+
+    // Redireciona
+    window.location.href = '/Tela inicial/tela_inicial.html';
+  }, { capture: true });
+}
+
+attachLogoutHandler(btnSair);
+attachLogoutHandler(btnSairMobile);

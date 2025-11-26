@@ -12,9 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const handleLogout = () => {
     if (confirm('Deseja realmente sair?')) {
+      try {
+        // Remove UID e possíveis dados armazenados
+        localStorage.removeItem('uid');
+        localStorage.removeItem('usuario');
+        sessionStorage.removeItem('visited');
+        sessionStorage.setItem('isLoggedIn', 'false');
+      } catch {}
+
+      // Notifica o script de banco para tentar signOut do Firebase (opcional)
+      try {
+        window.dispatchEvent(new CustomEvent('conta:logout'));
+      } catch {}
+
+      // Redireciona
       window.location.href = '/Tela inicial/tela_inicial.html';
     }
   };
+
   btnSair?.addEventListener('click', handleLogout);
   btnSairMobile?.addEventListener('click', handleLogout);
 
