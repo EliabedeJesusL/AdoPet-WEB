@@ -1,0 +1,206 @@
+:root{
+  --bg: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --primary: #ff8a00;
+  --primary-hover: #ff7a00;
+  --google: #5b86ff;
+  --facebook: #1877f2;
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: #f3f4f6;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* Layout em duas colunas ocupando 100% da tela */
+.layout{
+  display: grid;
+  grid-template-columns: 56% 44%;
+  width: 100vw;
+  min-height: 100dvh; /* preenche a tela também em notebooks com barra dinâmica */
+  background: var(--bg);
+}
+
+/* Lado esquerdo (imagem) */
+.hero{
+  position: relative;
+  overflow: hidden;
+}
+
+.hero img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero__overlay{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(0,0,0,.15), rgba(0,0,0,0));
+  pointer-events: none;
+}
+
+/* Lado direito (conteúdo) */
+.panel{
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}
+
+a{
+  text-decoration: none;
+}
+
+.panel__content{
+  width: min(520px, 86%);
+  margin: 0 auto;
+}
+
+h1{
+  font-size: clamp(2rem, 3.2vw, 2.8rem);
+  line-height: 1.15;
+  margin: 6px 0 22px;
+  font-weight: 700;
+  color: #0e0e0e;
+}
+
+/* Botões */
+.btn{
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform .05s ease, filter .2s ease, background .2s ease, opacity .2s ease;
+  will-change: transform;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn-primary{
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(255, 138, 0, .32);
+  margin-bottom: 14px;
+}
+.btn-primary:hover{ background: var(--primary-hover); }
+.btn-secondary{ opacity: .94; }
+
+/* Botão “Entrar sem login” (ghost) */
+.btn-ghost{
+  background: #fff;
+  color: var(--text);
+  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+.btn-ghost:hover{
+  background: #f9fafb;
+}
+
+/* Divisor */
+.divider{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 2px 18px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+.divider::before, .divider::after{
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: #e5e7eb;
+}
+
+/* Sociais */
+.btn-social{
+  color: #fff;
+  height: 56px;
+  margin-bottom: 12px;
+}
+
+.btn-google{
+  background: var(--google);
+  box-shadow: 0 8px 22px rgba(91, 134, 255, .28);
+}
+.btn-google:hover{ filter: brightness(.98); }
+
+.btn-facebook{
+  background: var(--facebook);
+  box-shadow: 0 8px 22px rgba(24, 119, 242, .28);
+}
+.btn-facebook:hover{ filter: brightness(.98); }
+
+.icon{
+  width: 22px;
+  height: 22px;
+}
+
+/* Toast (feedback) */
+.toast{
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  background: #111827;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.18);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, translate .25s ease;
+}
+.toast.show{
+  opacity: 1;
+}
+
+/* Acessibilidade */
+button:focus-visible{
+  outline: 3px solid rgba(0,0,0,.2);
+  outline-offset: 2px;
+}
+
+/* Responsivo para telas menores (tablets/cels) */
+@media (max-width: 1024px){
+  .layout{
+    grid-template-columns: 1fr;
+  }
+  .hero{
+    height: 42vh;
+    min-height: 320px;
+  }
+  .panel{
+    align-items: flex-start;
+  }
+  .panel__content{
+    margin-top: 32px;
+    margin-bottom: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  * { transition: none !important; }
+}
