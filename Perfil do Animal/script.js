@@ -27,14 +27,27 @@ async function init() {
   setLoading(true);
   try {
     const pet = await buscarPet(id);
-    if (!pet) {
-      renderError("Não encontramos esse pet. Ele pode ter sido removido.");
-      return;
-    }
+    if (!pet) return renderError("Não encontramos esse pet. Ele pode ter sido removido.");
+
     preencherTela(pet);
+
+    // Dono do animal (exibe nome no canto superior e caixa de anunciante)
+    const ownerUid = pet.donoUid || pet.ownerUid || pet.uidDono || pet.anuncianteUid || null;
+    if (ownerUid) {
+      const dono = await buscarUsuario(ownerUid);
+      if (dono) {
+        const nomeDono = resolveNomeDono(dono);
+        const fotoDono = resolveFotoDono(dono);
+        const localDono = resolveLocalDono(dono);
+        setAnunciante(nomeDono, fotoDono);
+        renderAnuncianteBox({ nome: nomeDono, foto: fotoDono, local: localDono, email: dono?.email, telefone: resolveTelefoneDono(dono) });
+      }
+    }
+
+    // Guarda para outras telas
     try {
       localStorage.setItem("adopet_selected_pet_id", id);
-      localStorage.setItem("adopet_selected_pet_nome", String(resolveNome(pet) || ""));
+      localStorage.setItem("adopet_selected_pet_nome", String(resolveNomePet(pet) || ""));
     } catch {}
   } catch (e) {
     console.error("Erro ao carregar pet:", e);
@@ -46,7 +59,6 @@ async function init() {
 
 /* =================== Realtime DB =================== */
 async function buscarPet(id) {
-  // Procura nos caminhos usados no projeto
   const paths = ["animal_Cadastrado", "animais"];
   for (const p of paths) {
     const snap = await get(ref(db, `${p}/${id}`));
@@ -55,16 +67,24 @@ async function buscarPet(id) {
   return null;
 }
 
-/* =================== Renderização =================== */
+async function buscarUsuario(uid) {
+  try {
+    const snap = await get(ref(db, `usuarios/${uid}`));
+    return snap.exists() ? (snap.val() || null) : null;
+  } catch {
+    return null;
+  }
+}
+
+/* =================== Renderização do PET =================== */
 function preencherTela(a) {
-  // Nome
-  const nome = resolveNome(a) || "Pet sem nome";
+  const nome = resolveNomePet(a) || "Pet sem nome";
   const titleEl = document.querySelector(".pet-detail h1");
   const article = document.querySelector(".pet-detail");
   if (titleEl) titleEl.textContent = nome;
   if (article) article.dataset.petName = nome;
 
-  // Subtítulo: Espécie • Sexo • Porte • Distância
+  // Subtítulo (Espécie • Sexo • Porte • Distância)
   const especie = labelEspecie(a.especie || a.tipo);
   const sexo = labelSexo(a.sexo || a.genero);
   const porte = labelPorte(a.porte || a.tamanho);
@@ -75,10 +95,6 @@ function preencherTela(a) {
     subEl.textContent = parts.join(" • ") || "—";
   }
 
-  // Nome do anunciante (se tiver no próprio pet)
-  const anunciante = a.anunciante || a.responsavel || a.donoNome;
-  if (anunciante) setAnunciante(anunciante);
-
   // Galeria
   const fotos = resolveFotos(a);
   renderCarousel(fotos);
@@ -86,17 +102,10 @@ function preencherTela(a) {
   // Detalhes (Descrição, peso, idade, local, vacinas)
   const descricao = resolveDescricao(a) || "—";
   const peso = formatPeso(a.peso ?? a.pesoKg);
-  const idade = formatIdade(a);
-  const local = resolveLocal(a, distancia);
+  const idade = resolveIdade(a);
+  const local = resolveLocalPet(a, distancia);
   const vacinas = resolveVacinas(a);
-
   renderDetalhes({ descricao, peso, idade, local, vacinas });
-}
-
-function setAnunciante(nome) {
-  const btn = document.querySelector(".card-header .btn.btn-light.btn-sm.rounded-pill");
-  const span = btn?.querySelector("span.fw-semibold.small");
-  if (span) span.textContent = String(nome);
 }
 
 function renderCarousel(fotos) {
@@ -105,11 +114,9 @@ function renderCarousel(fotos) {
   const indicators = carousel.querySelector(".carousel-indicators");
   const inner = carousel.querySelector(".carousel-inner");
 
-  // Limpa
   if (indicators) indicators.innerHTML = "";
   if (inner) inner.innerHTML = "";
 
-  // Sem foto -> placeholder
   if (!fotos.length) {
     const item = document.createElement("div");
     item.className = "carousel-item active";
@@ -141,7 +148,7 @@ function renderCarousel(fotos) {
 }
 
 function renderDetalhes({ descricao, peso, idade, local, vacinas }) {
-  // Garante que o collapse exista (se está comentado no HTML, cria aqui)
+  // Se o collapse está comentado no HTML, criamos aqui
   let collapse = document.getElementById("detalhesAnimal");
   if (!collapse) {
     const item = document.querySelector('#accDetalhes .accordion-item:first-child');
@@ -182,15 +189,75 @@ function li(icon, label, value) {
     </li>`;
 }
 
-/* =================== Resolvers/Formatters =================== */
-function resolveNome(a) {
+/* =================== Dono/Anunciante =================== */
+function setAnunciante(nome, fotoUrl) {
+  const btn = document.querySelector(".card-header .btn.btn-light.btn-sm.rounded-pill");
+  if (!btn) return;
+
+  // Texto
+  const span = btn.querySelector("span.fw-semibold.small");
+  if (span) span.textContent = String(nome || "Anunciante");
+
+  // Ícone -> avatar (se existir foto)
+  const icon = btn.querySelector("i.bi-person-circle");
+  if (fotoUrl) {
+    if (icon) icon.remove();
+    let img = btn.querySelector("img.__avatar");
+    if (!img) {
+      img = document.createElement("img");
+      img.className = "__avatar";
+      img.style.width = "20px";
+      img.style.height = "20px";
+      img.style.borderRadius = "50%";
+      img.style.objectFit = "cover";
+      btn.insertBefore(img, btn.firstChild);
+    }
+    img.src = fotoUrl;
+    img.alt = `Foto de ${nome || "Anunciante"}`;
+  }
+}
+
+// Pequeno bloco bonitinho com dados do anunciante
+function renderAnuncianteBox({ nome, foto, local, email, telefone }) {
+  const cardBody = document.querySelector(".pet-detail .card-body");
+  if (!cardBody) return;
+
+  // remove anterior
+  const old = cardBody.querySelector(".anunciante-box");
+  if (old) old.remove();
+
+  const box = document.createElement("div");
+  box.className = "anunciante-box mt-3 p-3 border rounded bg-light";
+  box.innerHTML = `
+    <div class="d-flex align-items-center gap-3">
+      ${foto ? `<img src="${escapeAttr(foto)}" alt="${escapeHtml(nome || "Anunciante")}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid #e5e6e8;">`
+             : `<div class="d-flex align-items-center justify-content-center bg-white border rounded-circle" style="width:56px;height:56px;">
+                  <i class="bi bi-person text-secondary fs-4"></i>
+                </div>`}
+      <div class="flex-grow-1">
+        <div class="fw-semibold">${escapeHtml(nome || "Anunciante")}</div>
+        <div class="text-secondary small">${escapeHtml(local || "—")}</div>
+        <div class="text-secondary small mt-1">
+          ${email ? `<a href="mailto:${escapeAttr(email)}" class="text-decoration-none me-3"><i class="bi bi-envelope me-1"></i>${escapeHtml(email)}</a>` : ""}
+          ${telefone ? `<a href="tel:${escapeAttr(telefone)}" class="text-decoration-none"><i class="bi bi-telephone me-1"></i>${escapeHtml(telefone)}</a>` : ""}
+        </div>
+      </div>
+    </div>
+  `;
+  // insere logo após o header do card-body
+  const firstBlock = cardBody.querySelector(".d-flex.align-items-start.justify-content-between");
+  if (firstBlock?.nextSibling) cardBody.insertBefore(box, firstBlock.nextSibling);
+  else cardBody.insertBefore(box, cardBody.firstChild);
+}
+
+/* =================== Resolvers PET =================== */
+function resolveNomePet(a) {
   return a?.nome || a?.nomeAnimal || a?.titulo || a?.apelido || null;
 }
 function resolveDescricao(a) {
   return a?.descricao || a?.sobre || a?.bio || a?.observacoes || a?.obs || null;
 }
 function resolveFotos(a) {
-  // Prioridades comuns: fotos (array), galeria (obj), fotoUrl/imagem (string)
   if (Array.isArray(a?.fotos) && a.fotos.length) return a.fotos.filter(Boolean);
   if (a?.galeria && typeof a.galeria === "object") return Object.values(a.galeria).filter(Boolean);
   if (Array.isArray(a?.imagens) && a.imagens.length) return a.imagens.filter(Boolean);
@@ -198,7 +265,15 @@ function resolveFotos(a) {
   if (a?.imagem) return [a.imagem];
   return [];
 }
-function resolveLocal(a, distLabel) {
+function resolveIdade(a) {
+  if (typeof a?.idade === "string" && a.idade.trim()) return a.idade.trim();
+  const anos = Number(a?.idadeAnos ?? a?.anos);
+  const meses = Number(a?.idadeMeses ?? a?.meses);
+  if (!isNaN(anos) && anos > 0) return `${anos} ano${anos > 1 ? "s" : ""}`;
+  if (!isNaN(meses) && meses > 0) return `${meses} mês${meses > 1 ? "es" : ""}`;
+  return null;
+}
+function resolveLocalPet(a, distLabel) {
   const cidade = a?.cidade || a?.localidade || null;
   const estado = a?.estado || a?.uf || null;
   const base = [cidade, estado].filter(Boolean).join(", ");
@@ -213,6 +288,45 @@ function resolveVacinas(a) {
   return null;
 }
 
+/* =================== Resolvers DONO =================== */
+function resolveNomeDono(u) {
+  const c = u?.cadastro || {};
+  const pj = c.PessoaJuridica?.dados || c.PessoaJuridica || c.pessoaJuridica?.dados || c.pessoaJuridica;
+  const pf = c.PessoaFisica?.dados || c.PessoaFisica || c.pessoaFisica?.dados || c.pessoaFisica;
+  return (
+    u?.nome ||
+    u?.displayName ||
+    pj?.instituicao ||
+    pj?.razaoSocial ||
+    pj?.nomeFantasia ||
+    pf?.nome ||
+    u?.perfil?.nome ||
+    null
+  );
+}
+function resolveFotoDono(u) {
+  const c = u?.cadastro || {};
+  const pj = c.PessoaJuridica?.dados || c.PessoaJuridica || c.pessoaJuridica?.dados || c.pessoaJuridica;
+  const pf = c.PessoaFisica?.dados || c.PessoaFisica || c.pessoaFisica?.dados || c.pessoaFisica;
+  return (
+    pj?.fotoUrl || pj?.logoUrl || pf?.fotoUrl || u?.fotoUrl || u?.avatarUrl || null
+  );
+}
+function resolveLocalDono(u) {
+  const loc = u?.localizacao || {};
+  const cidade = loc?.cidade || loc?.localidade || null;
+  const estado = loc?.estado || loc?.uf || null;
+  const base = [cidade, estado].filter(Boolean).join(", ");
+  return base || null;
+}
+function resolveTelefoneDono(u) {
+  const c = u?.cadastro || {};
+  const pj = c.PessoaJuridica?.dados || c.PessoaJuridica || c.pessoaJuridica?.dados || c.pessoaJuridica;
+  const pf = c.PessoaFisica?.dados || c.PessoaFisica || c.pessoaFisica?.dados || c.pessoaFisica;
+  return pj?.telefone || pf?.telefone || u?.telefone || null;
+}
+
+/* =================== Formatters =================== */
 function labelEspecie(v) {
   const s = String(v || "").toLowerCase();
   if (/(c[aã]o|cachorro|dog|canino)/.test(s)) return "Cão";
@@ -237,15 +351,6 @@ function formatPeso(v) {
   const n = Number(String(v).replace(",", "."));
   if (!isNaN(n) && n > 0) return `${n} kg`;
   return String(v);
-}
-function formatIdade(a) {
-  // Aceita 'idade' como string pronta ou anos/meses separados
-  if (typeof a?.idade === "string" && a.idade.trim()) return a.idade.trim();
-  const anos = Number(a?.idadeAnos ?? a?.anos);
-  const meses = Number(a?.idadeMeses ?? a?.meses);
-  if (!isNaN(anos) && anos > 0) return `${anos} ano${anos > 1 ? "s" : ""}`;
-  if (!isNaN(meses) && meses > 0) return `${meses} mês${meses > 1 ? "es" : ""}`;
-  return null;
 }
 function formatDist(v) {
   if (v == null || v === "") return null;
@@ -291,11 +396,8 @@ function renderError(message) {
 }
 function escapeHtml(s) {
   return String(s)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
 }
 function escapeAttr(s) { return escapeHtml(s).replace(/"/g, "&quot;"); }
 function capitalize(s) { s = String(s || ""); return s.charAt(0).toUpperCase() + s.slice(1); }
