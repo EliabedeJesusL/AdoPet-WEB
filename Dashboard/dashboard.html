@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Início - Feed</title>
+    <title>AdoPet — Início</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -12,18 +12,16 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-
     <!-- Bootstrap Icons -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-
     <!-- Custom CSS -->
     <link href="dashboard.css" rel="stylesheet" />
   </head>
   <body>
-    <!-- Header -->
+    <!-- Header enxuto (sem menu, só busca e ícones) -->
     <header class="border-bottom bg-white">
       <div class="container-xxl py-3 d-flex align-items-center justify-content-between gap-3">
         <div class="d-flex align-items-center gap-3">
@@ -41,12 +39,10 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas">
+          <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas" aria-controls="menuOffcanvas" aria-label="Abrir menu">
             <i class="bi bi-list"></i>
           </button>
           <button class="btn btn-outline-secondary" aria-label="Notificações"><i class="bi bi-bell"></i></button>
-
-          <!-- Ícone de chat agora navega para chat.html -->
           <a class="btn btn-outline-secondary" href="/Chat/chat.html" aria-label="Mensagens">
             <i class="bi bi-chat-dots"></i>
           </a>
@@ -57,178 +53,206 @@
     <!-- Main -->
     <main class="container-xxl my-4">
       <div class="row g-4">
-        <!-- Feed (esquerda) -->
+        <!-- Conteúdo principal -->
         <section class="col-12 col-lg-8 order-2 order-lg-1">
 
-          <!-- Stories -->
-          <div class="card shadow-sm mb-4">
-            <div class="card-body py-3">
-              <div class="d-flex flex-nowrap overflow-auto gap-4 stories">
-                <!-- Exemplo de stories -->
-                <button class="story-btn">
-                  <span class="story-ring">
-                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=300&auto=format&fit=crop" alt="Story 1" />
-                  </span>
-                  <small class="text-truncate d-block mt-2">João</small>
-                </button>
-
-                <button class="story-btn">
-                  <span class="story-ring">
-                    <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=300&auto=format&fit=crop" alt="Story 2" />
-                  </span>
-                  <small class="text-truncate d-block mt-2">Amor Pets</small>
-                </button>
-
-                <button class="story-btn">
-                  <span class="story-ring">
-                    <img src="https://images.unsplash.com/photo-1568572933382-74d440642117?q=80&w=300&auto=format&fit=crop" alt="Story 3" />
-                  </span>
-                  <small class="text-truncate d-block mt-2">Lar Doce Lar</small>
-                </button>
-
-                <button class="story-btn">
-                  <span class="story-ring">
-                    <img src="https://images.unsplash.com/photo-1601758125946-6ec2ef64243f?q=80&w=300&auto=format&fit=crop" alt="Story 4" />
-                  </span>
-                  <small class="text-truncate d-block mt-2">Patinhas</small>
-                </button>
-
-                <button class="story-btn">
-                  <span class="story-ring">
-                    <img src="https://images.unsplash.com/photo-1477973770766-6228305816df?q=80&w=300&auto=format&fit=crop" alt="Story 5" />
-                  </span>
-                  <small class="text-truncate d-block mt-2">Maria</small>
-                </button>
+          <!-- Hero -->
+          <section id="hero" class="card shadow-sm mb-4 hero">
+            <div class="row g-0 align-items-center">
+              <div class="col-12 col-lg-6 p-4 p-lg-5">
+                <h1 class="hero-title mb-3">
+                  <span id="heroPhrase">Seu novo melhor amigo está te esperando.</span>
+                </h1>
+                <p class="text-secondary mb-4">Adoção segura e rápida, em poucos passos.</p>
+                <a class="btn btn-accent btn-lg" href="/Explorar/explorar.html">Explorar Animais</a>
               </div>
-            </div>
-          </div>
-
-          <!-- Post 1 -->
-          <article class="card shadow-sm post-card mb-4" data-post-id="1">
-            <div class="card-header bg-white border-0 pb-0">
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                  <img class="avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=120&auto=format&fit=crop" alt="Avatar João" />
-                  <div>
-                    <div class="fw-semibold">João</div>
-                    <div class="text-secondary small">Praia do Canto</div>
-                  </div>
-                </div>
-                <div class="dropstart">
-                  <button class="btn btn-link text-secondary p-0" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical fs-5"></i>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Denunciar</a></li>
-                    <li><a class="dropdown-item" href="#">Ocultar</a></li>
-                    <li><a class="dropdown-item" href="#">Copiar link</a></li>
-                  </ul>
+              <div class="col-12 col-lg-6">
+                <div class="hero-media ratio ratio-16x9 ratio-lg-4x3">
+                  <img id="heroImage" class="object-fit-cover" src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1600&auto=format&fit=crop" alt="Adoção responsável" />
                 </div>
               </div>
             </div>
+          </section>
 
-            <img
-              class="card-img-top"
-              src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1600&auto=format&fit=crop"
-              alt="Filhotes de cachorro"
-            />
-
+          <!-- Animais em destaque -->
+          <section class="card shadow-sm mb-4">
             <div class="card-body">
               <div class="d-flex align-items-center justify-content-between mb-2">
-                <div class="d-flex align-items-center gap-3">
-                  <button class="btn btn-action btn-like" aria-label="Curtir">
-                    <i class="bi bi-heart"></i>
-                  </button>
-                  <button class="btn btn-action" aria-label="Comentar">
-                    <i class="bi bi-chat"></i>
-                  </button>
-                  <button class="btn btn-action" aria-label="Compartilhar">
-                    <i class="bi bi-send"></i>
-                  </button>
+                <h2 class="h5 m-0">Animais em destaque</h2>
+                <a class="btn btn-sm btn-outline-secondary" href="/Explorar/explorar.html">Ver todos</a>
+              </div>
+
+              <div id="carouselFeatured" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-inner" id="featuredInner">
+                  <!-- Slides via JS -->
                 </div>
-                <button class="btn btn-action btn-save" aria-label="Salvar">
-                  <i class="bi bi-bookmark"></i>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselFeatured" data-bs-slide="prev" aria-label="Anterior">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselFeatured" data-bs-slide="next" aria-label="Próximo">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 </button>
               </div>
-
-              <div class="small text-secondary mb-1">
-                <span class="likes-count" data-count="10">10</span> curtidas
-              </div>
-
-              <p class="m-0">
-                Amo por Gabriel e outras pessoas.<br />
-                <span class="text-secondary small">João • Meus cachorrões, Toné, Tutu, mesa e Robson.</span>
-              </p>
             </div>
-          </article>
+          </section>
 
-          <!-- Post 2 -->
-          <article class="card shadow-sm post-card mb-4" data-post-id="2">
-            <div class="card-header bg-white border-0 pb-0">
-              <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                  <img class="avatar" src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=120&auto=format&fit=crop" alt="Avatar Amor Pets" />
-                  <div>
-                    <div class="fw-semibold">Amor Pets</div>
-                    <div class="text-secondary small">Arena</div>
-                  </div>
-                </div>
-                <div class="dropstart">
-                  <button class="btn btn-link text-secondary p-0" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical fs-5"></i>
-                  </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Denunciar</a></li>
-                    <li><a class="dropdown-item" href="#">Ocultar</a></li>
-                    <li><a class="dropdown-item" href="#">Copiar link</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <img
-              class="card-img-top"
-              src="https://images.unsplash.com/photo-1603321555155-1369ea8228f5?q=80&w=1600&auto=format&fit=crop"
-              alt="Gato fofo"
-            />
-
+          <!-- ONGs em destaque (substitui Categorias) -->
+          <section class="card shadow-sm mb-4">
             <div class="card-body">
               <div class="d-flex align-items-center justify-content-between mb-2">
-                <div class="d-flex align-items-center gap-3">
-                  <button class="btn btn-action btn-like" aria-label="Curtir">
-                    <i class="bi bi-heart"></i>
-                  </button>
-                  <button class="btn btn-action" aria-label="Comentar">
-                    <i class="bi bi-chat"></i>
-                  </button>
-                  <button class="btn btn-action" aria-label="Compartilhar">
-                    <i class="bi bi-send"></i>
-                  </button>
+                <h2 class="h5 m-0">ONGs em destaque</h2>
+              </div>
+
+              <div id="carouselOrgs" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5200">
+                <div class="carousel-inner" id="orgsInner">
+                  <!-- Slides via JS -->
                 </div>
-                <button class="btn btn-action btn-save" aria-label="Salvar">
-                  <i class="bi bi-bookmark"></i>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselOrgs" data-bs-slide="prev" aria-label="Anterior">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselOrgs" data-bs-slide="next" aria-label="Próximo">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 </button>
               </div>
-
-              <div class="small text-secondary mb-1">
-                <span class="likes-count" data-count="23">23</span> curtidas
-              </div>
-
-              <p class="m-0">
-                Adote, não compre. Esse lindão procura um lar!
-              </p>
             </div>
-          </article>
+          </section>
 
+          <!-- Como funciona -->
+          <section class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h2 class="h5 mb-3">Como funciona a adoção no AdoPet</h2>
+              <div class="row g-3">
+                <div class="col-12 col-md-4">
+                  <div class="how-card p-3 h-100 border rounded-3">
+                    <div class="icon-box"><i class="bi bi-search"></i></div>
+                    <h3 class="h6 fw-semibold mt-2">Explore</h3>
+                    <p class="text-secondary small m-0">Encontre animais próximos ao seu perfil.</p>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div class="how-card p-3 h-100 border rounded-3">
+                    <div class="icon-box"><i class="bi bi-chat-dots"></i></div>
+                    <h3 class="h6 fw-semibold mt-2">Converse</h3>
+                    <p class="text-secondary small m-0">Fale com o cuidador/ONG para tirar dúvidas.</p>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div class="how-card p-3 h-100 border rounded-3">
+                    <div class="icon-box"><i class="bi bi-shield-check"></i></div>
+                    <h3 class="h6 fw-semibold mt-2">Adote com segurança</h3>
+                    <p class="text-secondary small m-0">Finalize com orientação e suporte do AdoPet.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Por que adotar -->
+          <section class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h2 class="h5 mb-3">Por que adotar?</h2>
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <div class="why-card p-3 h-100 border rounded-3 d-flex align-items-start gap-3">
+                    <i class="bi bi-house-heart why-icon"></i>
+                    <div>
+                      <div class="fw-semibold">Dar um lar para quem precisa</div>
+                      <div class="text-secondary small">Transforme uma vida com carinho e cuidado.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="why-card p-3 h-100 border rounded-3 d-flex align-items-start gap-3">
+                    <i class="bi bi-emoji-smile why-icon"></i>
+                    <div>
+                      <div class="fw-semibold">Ajuda sua saúde mental</div>
+                      <div class="text-secondary small">Amor e companhia fazem bem para todos.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="why-card p-3 h-100 border rounded-3 d-flex align-items-start gap-3">
+                    <i class="bi bi-people why-icon"></i>
+                    <div>
+                      <div class="fw-semibold">Reduz o abandono</div>
+                      <div class="text-secondary small">Você faz parte da mudança que o mundo precisa.</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="why-card p-3 h-100 border rounded-3 d-flex align-items-start gap-3">
+                    <i class="bi bi-shield-lock why-icon"></i>
+                    <div>
+                      <div class="fw-semibold">Processo seguro</div>
+                      <div class="text-secondary small">Adoção responsável e acompanhada pela plataforma.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Como usar o AdoPet (somente texto explicativo, sem links) -->
+          <section class="card shadow-sm mb-4">
+            <div class="card-body">
+              <h2 class="h5 mb-3">Como usar o AdoPet</h2>
+              <div class="row g-3">
+                <div class="col-12 col-md-6 col-lg-3">
+                  <div class="howuse-card border rounded-3 p-3 h-100 d-block">
+                    <div class="icon-box"><i class="bi bi-person-plus"></i></div>
+                    <div class="fw-semibold mt-2 text-dark">Criar conta — Pessoa Física</div>
+                    <div class="text-secondary small">
+                      Acesse a tela de criar conta, selecione Pessoa Física, preencha seus dados e confirme por email.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                  <div class="howuse-card border rounded-3 p-3 h-100 d-block">
+                    <div class="icon-box"><i class="bi bi-buildings"></i></div>
+                    <div class="fw-semibold mt-2 text-dark">Criar conta — ONG / Protetor</div>
+                    <div class="text-secondary small">
+                      Na criação de conta, escolha ONG/Protetor, complete os dados da instituição e finalize a verificação.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                  <div class="howuse-card border rounded-3 p-3 h-100 d-block">
+                    <div class="icon-box"><i class="bi bi-camera"></i></div>
+                    <div class="fw-semibold mt-2 text-dark">Cadastrar animal</div>
+                    <div class="text-secondary small">
+                      Tire uma boa foto, descreva idade/saúde e publique. O anúncio entra no Explorar.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                  <div class="howuse-card border rounded-3 p-3 h-100 d-block">
+                    <div class="icon-box"><i class="bi bi-chat-heart"></i></div>
+                    <div class="fw-semibold mt-2 text-dark">Acompanhar pedidos</div>
+                    <div class="text-secondary small">
+                      Use o chat para conversar, combinar a adoção e registrar a conclusão com segurança.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Rodapé com texto simples -->
+          <footer class="my-4 text-center text-secondary small">
+            <p class="mb-1">
+              AdoPet: um aplicativo que conecta adotantes, ONGs e doadores em um só lugar, tornando o processo de adoção mais acessível e incentivando doações seguras para apoiar instituições.
+            </p>
+            <div>© AdoPet 2025 — Todos os direitos reservados.</div>
+          </footer>
         </section>
 
-        <!-- MENU LATERAL DIREITO (mesmos itens do rodapé) -->
+        <!-- MENU LATERAL DIREITO (igual antes) -->
         <aside class="col-12 col-lg-4 order-1 order-lg-2">
           <div class="sticky-lg-top" style="top: 1.25rem">
             <!-- Versão desktop -->
             <div class="card shadow-sm d-none d-lg-block side-menu-card">
               <nav class="list-group list-group-flush side-tabs">
-                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" data-tab="home" aria-current="page">
+                <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" data-tab="home" aria-current="page">
                   <i class="bi bi-house side-icon"></i>
                   <span>Início</span>
                 </a>
@@ -255,14 +279,14 @@
             <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="menuOffcanvas" aria-labelledby="menuOffcanvasLabel">
               <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="menuOffcanvasLabel">Menu</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
               </div>
               <div class="offcanvas-body p-0">
                 <nav class="list-group list-group-flush side-tabs">
                   <a href="/Dashboard/dashboard.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="home">
                     <i class="bi bi-house side-icon"></i><span>Início</span>
                   </a>
-                  <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="explore">
+                  <a href="/Explorar/explorar.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab active" data-tab="explore">
                     <i class="bi bi-compass side-icon"></i><span>Explorar</span>
                   </a>
                   <a href="/Cadastro de Animal/cadastro_animal.html" class="list-group-item list-group-item-action d-flex align-items-center gap-3 side-tab" data-tab="cadastrar">
@@ -282,29 +306,24 @@
       </div>
     </main>
 
-    <!-- Bottom nav (opcional, só mobile) -->
+    <!-- Bottom nav (mobile) -->
     <nav class="navbar fixed-bottom bg-white border-top d-md-none">
       <div class="container-fluid px-3">
         <div class="d-flex justify-content-between w-100 text-center small">
-          <a href="/Dashboard/dashboard.html" class="text-secondary text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-house fs-5"></i></div>
-            Início
+          <a href="/Dashboard/dashboard.html" class="text-accent text-decoration-none flex-fill py-2" aria-current="page">
+            <div><i class="bi bi-house fs-5"></i></div>Início
           </a>
           <a href="/Explorar/explorar.html" class="text-secondary text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-compass fs-5"></i></div>
-            Explorar
+            <div><i class="bi bi-compass fs-5"></i></div>Explorar
           </a>
-          <a href="/Cadastro de Animal/cadastro_animal.html" class="text-accent text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-plus-circle fs-5"></i></div>
-            Cadastrar
+          <a href="/Cadastro de Animal/cadastro_animal.html" class="text-secondary text-decoration-none flex-fill py-2">
+            <div><i class="bi bi-plus-circle fs-5"></i></div>Cadastrar
           </a>
           <a href="/Doe/doe.html" class="text-secondary text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-gift fs-5"></i></div>
-            Doe
+            <div><i class="bi bi-gift fs-5"></i></div>Doe
           </a>
           <a href="/Conta/conta.html" class="text-secondary text-decoration-none flex-fill py-2">
-            <div><i class="bi bi-person fs-5"></i></div>
-            Conta
+            <div><i class="bi bi-person fs-5"></i></div>Conta
           </a>
         </div>
       </div>
@@ -318,6 +337,8 @@
     ></script>
 
     <!-- Custom JS -->
-    <script src="dashboard.js"></script>
+    <script src="/Dashboard/dashboard.js"></script>
+    <!-- Banco (Firebase) -->
+    <script type="module" src="/Dashboard/script.js"></script>
   </body>
 </html>
