@@ -23,27 +23,43 @@ const orgsInner = document.getElementById('orgsInner');
 let isLoggedIn = !!localStorage.getItem('uid');
 onAuthStateChanged(auth, (user) => { isLoggedIn = !!user; });
 
-// Intercepta cliques nos botões de Adotar (carrossel e resultados da busca)
+// Intercepta cliques:
+// - "Adotar" sem login → alerta + redireciona
+// - "Doar" (ONGs) → salva ONG no localStorage antes de navegar
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a');
   if (!a) return;
 
+  // Bloqueio de adotar sem login (somente carrossel de animais)
   const guardAnimal = a.dataset.guard === 'animal';
   const isAdoptBtn = a.matches('#featuredInner a.btn.btn-sm.btn-accent');
-
   if ((guardAnimal || isAdoptBtn) && !isLoggedIn) {
     e.preventDefault();
     alert('Você precisa estar logado para ver os detalhes do animal.');
     window.location.href = '/index.html';
+    return;
+  }
+
+  // Ao clicar em "Doar" no carrossel de ONGs, grava a ONG selecionada no localStorage
+  const isDonateBtn = a.matches('#orgsInner a.btn-doar');
+  if (isDonateBtn) {
+    try {
+      const payload = a.dataset.ong; // JSON com uid, nome, fotoUrl
+      const uid = a.dataset.uid;
+      if (payload) {
+        localStorage.setItem('adopet_instituicao_selecionada', payload);
+      } else if (uid) {
+        localStorage.setItem('adopet_instituicao_selecionada', JSON.stringify({ uid }));
+      }
+    } catch {}
   }
 });
 
-// Carrega destaques + listas completas para busca
+// Carrega destaques + listas completas para busca (live search)
 document.addEventListener('DOMContentLoaded', async () => {
   await Promise.all([carregarDestaquesAnimais(), carregarDestaquesOngs()]);
   await Promise.all([loadAllAnimals(), loadAllOrgs()]);
 
-  // expõe função de busca
   window.ADO = window.ADO || {};
   window.ADO.search = searchLive;
 });
@@ -66,7 +82,7 @@ async function carregarDestaquesAnimais() {
       tags: asTags(a?.tags),
     }));
 
-    window.__ANIMALS_FEATURED__ = pickFeatured(items, 9); // guarda pro termo "animais"
+    window.__ANIMALS_FEATURED__ = pickFeatured(items, 9);
     renderSlides(featuredInner, window.__ANIMALS_FEATURED__, renderPetCard);
   } catch (err) {
     console.error("Erro ao carregar destaques:", err);
@@ -106,7 +122,7 @@ async function carregarDestaquesOngs() {
       });
     });
 
-    window.__ORGS_FEATURED__ = pickFeatured(list, 9, "ong"); // guarda pro termo "ongs"
+    window.__ORGS_FEATURED__ = pickFeatured(list, 9, "ong");
     renderSlides(orgsInner, window.__ORGS_FEATURED__, renderOngCard);
   } catch (err) {
     console.error("Erro ao carregar ONGs:", err);
@@ -163,7 +179,6 @@ async function searchLive(qRaw) {
   const q = normalizeText(qRaw || "");
   if (!q) return { animals: [], orgs: [] };
 
-  // palavras-chave
   if (q === "animais" || q === "animal") {
     return { animals: (window.__ANIMALS_FEATURED__ || []).slice(0, 9), orgs: [] };
   }
@@ -171,7 +186,6 @@ async function searchLive(qRaw) {
     return { animals: [], orgs: (window.__ORGS_FEATURED__ || []).slice(0, 9) };
   }
 
-  // filtro por nome/especie (animais)
   const animals = ANIMALS_ALL
     .filter(a =>
       a.nomeNorm.includes(q) ||
@@ -180,7 +194,6 @@ async function searchLive(qRaw) {
     )
     .slice(0, 6);
 
-  // filtro por nome da instituição (ongs)
   const orgs = ORGS_ALL
     .filter(o => o.instituicaoNorm.includes(q))
     .slice(0, 6);
@@ -262,16 +275,30 @@ function renderPetCard(a) {
       </div>
     </div>`;
 }
+
+// ALTERADO: agora tem botão "Doar" que direciona ao perfil da ONG e grava no localStorage
 function renderOngCard(o) {
   const nome = escapeHtml(o.instituicao);
   const img = escapeAttr(o.foto);
+  const href = `/Perfil da ONG/perfil_ong.html?uid=${encodeURIComponent(o.id)}`;
+
+  // payload para salvar no localStorage ao clicar
+  const payload = escapeAttr(JSON.stringify({
+    uid: o.id,
+    nome: o.instituicao,
+    fotoUrl: o.foto
+  }));
+
   return `
     <div class="col-12 col-md-4">
       <div class="card org-mini h-100 shadow-sm">
         <img src="${img}" alt="${nome}" loading="lazy">
         <div class="card-body">
           <h3 class="h6 fw-semibold mb-2">${nome}</h3>
-          <div class="text-secondary small">Instituição em destaque</div>
+          <a class="btn btn-sm btn-accent btn-doar"
+             href="${href}"
+             data-uid="${escapeAttr(o.id)}"
+             data-ong="${payload}">Doar</a>
         </div>
       </div>
     </div>`;
@@ -306,7 +333,6 @@ function normalizeSpecies(v) {
   return s || "outro";
 }
 function matchSpeciesQuery(q, especieNorm) {
-  // reconhece sinônimos de cão/gato
   if (/(c[aã]o|cao|cachorro|dog)/.test(q)) return especieNorm.includes("cao");
   if (/(gato|cat|felino)/.test(q)) return especieNorm.includes("gato");
   return false;
