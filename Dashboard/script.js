@@ -25,12 +25,12 @@ onAuthStateChanged(auth, (user) => { isLoggedIn = !!user; });
 
 // Intercepta cliques:
 // - "Adotar" sem login → alerta + redireciona
-// - "Doar" (ONGs) → salva ONG no localStorage antes de navegar
+// - "Doar" (ONGs) → salva ONG no localStorage antes de navegar (para TODAS as ONGs renderizadas)
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a');
   if (!a) return;
 
-  // Bloqueio de adotar sem login (somente carrossel de animais)
+  // Bloqueio "Adotar" (carrossel de animais)
   const guardAnimal = a.dataset.guard === 'animal';
   const isAdoptBtn = a.matches('#featuredInner a.btn.btn-sm.btn-accent');
   if ((guardAnimal || isAdoptBtn) && !isLoggedIn) {
@@ -40,18 +40,23 @@ document.addEventListener('click', (e) => {
     return;
   }
 
-  // Ao clicar em "Doar" no carrossel de ONGs, grava a ONG selecionada no localStorage
-  const isDonateBtn = a.matches('#orgsInner a.btn-doar');
+  // NOVO: salva ONG selecionada em QUALQUER botão "Doar" com data-ong (pega todas as ONGs)
+  const isDonateBtn =
+    a.matches('#orgsInner a.btn-doar') || a.hasAttribute('data-ong');
+
   if (isDonateBtn) {
     try {
-      const payload = a.dataset.ong; // JSON com uid, nome, fotoUrl
-      const uid = a.dataset.uid;
+      const payload = a.getAttribute('data-ong'); // JSON com {uid, nome, fotoUrl}
+      const uid = a.getAttribute('data-uid');
       if (payload) {
         localStorage.setItem('adopet_instituicao_selecionada', payload);
       } else if (uid) {
         localStorage.setItem('adopet_instituicao_selecionada', JSON.stringify({ uid }));
       }
-    } catch {}
+      // deixa navegar para o perfil
+    } catch {
+      // se algo falhar ao salvar, segue a navegação mesmo assim
+    }
   }
 });
 
@@ -130,7 +135,7 @@ async function carregarDestaquesOngs() {
   }
 }
 
-/* ===== Busca instantânea: listas completas ===== */
+/* ===== Busca (listas completas) ===== */
 let ANIMALS_ALL = [];
 let ORGS_ALL = [];
 
@@ -174,7 +179,7 @@ async function loadAllOrgs() {
   });
 }
 
-/* ===== Função de busca exposta ===== */
+/* ===== Live search ===== */
 async function searchLive(qRaw) {
   const q = normalizeText(qRaw || "");
   if (!q) return { animals: [], orgs: [] };
@@ -276,13 +281,12 @@ function renderPetCard(a) {
     </div>`;
 }
 
-// ALTERADO: agora tem botão "Doar" que direciona ao perfil da ONG e grava no localStorage
+// NOVO: botão "Doar" com data-ong e data-uid para TODAS as ONGs geradas
 function renderOngCard(o) {
   const nome = escapeHtml(o.instituicao);
   const img = escapeAttr(o.foto);
   const href = `/Perfil da ONG/perfil_ong.html?uid=${encodeURIComponent(o.id)}`;
 
-  // payload para salvar no localStorage ao clicar
   const payload = escapeAttr(JSON.stringify({
     uid: o.id,
     nome: o.instituicao,
@@ -320,7 +324,6 @@ function pickFeatured(items, limit = 9, type = "pet") {
   return selected.slice(0, limit);
 }
 
-// Normalizações p/ busca
 function normalizeText(s) {
   return String(s || "")
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')

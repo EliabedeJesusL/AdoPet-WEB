@@ -60,3 +60,28 @@ body { background: #f5f6fa; }
 .side-tabs .side-tab:focus, .side-tabs .side-tab:focus-visible{
   box-shadow:none !important; outline:2px solid rgba(255,140,0,.35); outline-offset:2px;
 }
+
+/* Corrige setas do carrossel cobrindo cards das laterais */
+#carouselFeatured .carousel-control-prev,
+#carouselFeatured .carousel-control-next,
+#carouselOrgs .carousel-control-prev,
+#carouselOrgs .carousel-control-next {
+  width: 48px;            /* padrão do Bootstrap é ~15% do carrossel */
+  background: transparent;/* sem overlay */
+}
+
+/* Opcional: aproximar um pouco as setas da borda para liberar ainda mais espaço */
+#carouselFeatured .carousel-control-prev { left: 6px; }
+#carouselFeatured .carousel-control-next { right: 6px; }
+#carouselOrgs .carousel-control-prev    { left: 6px; }
+#carouselOrgs .carousel-control-next    { right: 6px; }
+
+/* Em telas bem pequenas, pode reduzir ainda mais */
+@media (max-width: 576px) {
+  #carouselFeatured .carousel-control-prev,
+  #carouselFeatured .carousel-control-next,
+  #carouselOrgs .carousel-control-prev,
+  #carouselOrgs .carousel-control-next {
+    width: 40px;
+  }
+}
