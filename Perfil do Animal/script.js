@@ -40,7 +40,13 @@ async function init() {
         const fotoDono = resolveFotoDono(dono);
         const localDono = resolveLocalDono(dono);
         setAnunciante(nomeDono, fotoDono);
-        renderAnuncianteBox({ nome: nomeDono, foto: fotoDono, local: localDono, email: dono?.email, telefone: resolveTelefoneDono(dono) });
+        renderAnuncianteBox({
+          nome: nomeDono,
+          foto: fotoDono,
+          local: localDono,
+          email: dono?.email || dono?.contato?.email || null,
+          telefone: resolveTelefoneDono(dono),
+        });
       }
     }
 
@@ -194,7 +200,7 @@ function setAnunciante(nome, fotoUrl) {
   const btn = document.querySelector(".card-header .btn.btn-light.btn-sm.rounded-pill");
   if (!btn) return;
 
-  // Texto
+  // Texto (substitui "Maryana Bicalho")
   const span = btn.querySelector("span.fw-semibold.small");
   if (span) span.textContent = String(nome || "Anunciante");
 
@@ -217,7 +223,7 @@ function setAnunciante(nome, fotoUrl) {
   }
 }
 
-// Pequeno bloco bonitinho com dados do anunciante
+// Bloco com dados do anunciante (nome, local, email, telefone)
 function renderAnuncianteBox({ nome, foto, local, email, telefone }) {
   const cardBody = document.querySelector(".pet-detail .card-body");
   if (!cardBody) return;
